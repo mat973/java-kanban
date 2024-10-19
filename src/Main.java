@@ -32,8 +32,8 @@ public class Main {
         TaskManager.changeTask(taskDto);
         System.out.println(TaskManager.getTasks());
 
-        EpicDto epicDto = new EpicDto(2);
-        SubtaskDto subtaskDto = new SubtaskDto(7, "Sub11", "Todosomething"
+        EpicDto epicDto = new EpicDto(1);
+        SubtaskDto subtaskDto = new SubtaskDto(3, "Sub11", "Todosomething"
                 , Condition.IN_PROGRESS, epicDto);
         TaskManager.changeSubTask(subtaskDto);
         System.out.println("-".repeat(30));
@@ -41,11 +41,26 @@ public class Main {
 
 
         System.out.println("-".repeat(30));
-        SubtaskDto subtaskDto1 = new SubtaskDto(7, "Sub11", "Todosomething"
+        SubtaskDto subtaskDto1 = new SubtaskDto(4, "Sub11", "Todosomething"
+                , Condition.DONE, epicDto);
+        SubtaskDto subtaskDto2 = new SubtaskDto(3, "Sub11", "Todosomething"
+                , Condition.DONE, epicDto);
+        SubtaskDto subtaskDto3 = new SubtaskDto(5, "Sub11", "Todosomething"
+                , Condition.DONE, epicDto);
+        SubtaskDto subtaskDto4 = new SubtaskDto(6, "Sub11", "Todosomething"
                 , Condition.DONE, epicDto);
         TaskManager.changeSubTask(subtaskDto1);
+        TaskManager.changeSubTask(subtaskDto2);
+        TaskManager.changeSubTask(subtaskDto3);
+        TaskManager.changeSubTask(subtaskDto4);
+        subtaskDto4.setCondition(Condition.IN_PROGRESS);
+        TaskManager.changeSubTask(subtaskDto4);
         System.out.println(TaskManager.getEpicTasks());
 
         System.out.println("-".repeat(30));
+
+        EpicDto epicDto1  = new EpicDto(1, "Новове имя", "Новая дискрипция");
+        TaskManager.changeEpic(epicDto1);
+        System.out.println(TaskManager.getEpicTasks());
     }
 }
