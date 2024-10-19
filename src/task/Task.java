@@ -8,12 +8,29 @@ public class Task {
     protected Condition condition;
     protected String name;
 
-     Task(String name ,String description, Condition condition ) {
+
+    protected Task(int id,  String name, String description, Condition condition) {
+        this.id = id;
+        this.description = description;
+        this.condition = condition;
+        this.name = name;
+    }
+
+    protected Task(String name , String description, Condition condition ) {
         this.id = TaskManager.getId();
         this.description = description;
         this.condition = condition;
         this.name = name;
     }
+
+
+    protected Task(Task task) {
+        this.id = task.id;
+        this.description = task.description;
+        this.condition = task.condition;
+        this.name = task.name;
+    }
+
 
 
     protected int getId() {
@@ -32,15 +49,15 @@ public class Task {
         return name;
     }
 
-    public void setDescription(String description) {
+    protected void setDescription(String description) {
         this.description = description;
     }
 
-    public void setCondition(Condition condition) {
+    protected void setCondition(Condition condition) {
         this.condition = condition;
     }
 
-    public void setName(String name) {
+    protected void setName(String name) {
         this.name = name;
     }
 

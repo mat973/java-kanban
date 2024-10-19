@@ -1,38 +1,51 @@
 
-import task.TaskManager;
+import Dto.EpicDto;
+import Dto.SubtaskDto;
+import Dto.TaskDto;
+import task.*;
 
 
 public class Main {
 
     public static void main(String[] args) {
         System.out.println("Поехали!");
-//        System.out.println(TaskManager.getId());
-//        System.out.println(TaskManager.getId());
-       // Epic epic = new Epic("что то","что то делаем", Condition.NEW);
-       // Subtask subtask = new Subtask("чуть","немного", Condition.NEW,  epic);
-        TaskManager.createTusk("Alone", "to be alone");
-        TaskManager.createTusk("TODO", "Todosomething");
-        TaskManager.createEpic("TODO", "Todosomething" );
-        TaskManager.createSubTusk("TODO", "Todosomething",
-                TaskManager.getEpicTasks().get(2));
-        TaskManager.createSubTusk("TODO1", "Todosomething",
-                TaskManager.getEpicTasks().get(2));
-        TaskManager.createSubTusk("TODO2", "Todosomething",
-                TaskManager.getEpicTasks().get(2));
-        TaskManager.createSubTusk("TODO3", "Todosomething",
+
+        TaskManager.createTusk("Task", "to be alone");
+        TaskManager.createEpic("Epic1", "Todosomething" );
+        TaskManager.createEpic("Epic2", "Todosomething" );
+        TaskManager.createSubTusk("Sub1", "Todosomething",
+                TaskManager.getEpicTasks().get(1));
+        TaskManager.createSubTusk("Sub2", "Todosomething",
+                TaskManager.getEpicTasks().get(1));
+        TaskManager.createSubTusk("Sub3", "Todosomething",
+                TaskManager.getEpicTasks().get(1));
+        TaskManager.createSubTusk("Sub4", "Todosomething",
+                TaskManager.getEpicTasks().get(1));
+        TaskManager.createSubTusk("Sub1", "Todosomething",
                 TaskManager.getEpicTasks().get(2));
 
-        //System.out.println(TaskManager.getEpicTasks());
-     //   TaskManager.getEpicTasks().put(1, TaskManager.getEpicTasks().get(0));
-        System.out.println(TaskManager.getSupTasks());
+
+        System.out.println(TaskManager.getTasks());
         System.out.println(TaskManager.getEpicTasks());
+        System.out.println(TaskManager.getSubTasks());
+        TaskDto taskDto = new TaskDto(0,"Alone", " to be alone", Condition.DONE);
+        TaskManager.changeTask(taskDto);
         System.out.println(TaskManager.getTasks());
 
-        TaskManager.removeAllTasks();
-  //      TaskManager.removeAllSubTasks();
-        TaskManager.removeAllEpics();
-        System.out.println(TaskManager.getSupTasks());
+        EpicDto epicDto = new EpicDto(2);
+        SubtaskDto subtaskDto = new SubtaskDto(7, "Sub11", "Todosomething"
+                , Condition.IN_PROGRESS, epicDto);
+        TaskManager.changeSubTask(subtaskDto);
+        System.out.println("-".repeat(30));
         System.out.println(TaskManager.getEpicTasks());
-        System.out.println(TaskManager.getTasks());
+
+
+        System.out.println("-".repeat(30));
+        SubtaskDto subtaskDto1 = new SubtaskDto(7, "Sub11", "Todosomething"
+                , Condition.DONE, epicDto);
+        TaskManager.changeSubTask(subtaskDto1);
+        System.out.println(TaskManager.getEpicTasks());
+
+        System.out.println("-".repeat(30));
     }
 }

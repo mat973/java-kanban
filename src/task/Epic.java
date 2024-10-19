@@ -11,8 +11,12 @@ public class Epic extends Task {
         this.subtasks = new ArrayList<>();
     }
 
+    protected Epic(Epic epic) {
+        super(epic);
+        this.subtasks = epic.subtasks;
+    }
 
-    protected ArrayList<Subtask> getSubtasks() {
+    public ArrayList<Subtask> getSubtasks() {
         return subtasks;
     }
 
@@ -22,7 +26,8 @@ public class Epic extends Task {
          String result ="[Название:" + getName() + ", описание:" + getDescription() + ", состояние:"
                  + getCondition().name() + ". Подзадачи:";
         for (int i = 0; i < subtasks.size(); i++) {
-            result = result + subtasks.get(i).getName();
+            result = result +"ID: "+ subtasks.get(i).getId() + ", имя: " + subtasks.get(i).getName() + ", состояние: "
+            + subtasks.get(i).getCondition();
             if (i < subtasks.size() - 1)
                 result+= ", ";
 
