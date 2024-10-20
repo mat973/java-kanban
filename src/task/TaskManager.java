@@ -30,24 +30,25 @@ public final class TaskManager {
         return counter++;
     }
 
-    public static void createTusk(String name, String description) {
-        Task task = new Task(name, description, Condition.NEW);
+    public static void createTask(TaskDto taskDto) {
+        Task task = new Task(taskDto.getName(), taskDto.getDescription(), Condition.NEW);
         tasks.put(task.id, task);
     }
 
-    public static void createSubTusk(String name, String description, Epic epic) {
-        if (!epicTasks.containsKey(epic.getId())) {
+    public static void createSubTusk(SubtaskDto subtaskDto) {
+        if (!epicTasks.containsKey(subtaskDto.getEpicId())) {
             System.out.println("Подзадача не может сущесвовать самастоятельно");
         }
-        Subtask subtask = new Subtask(name, description, Condition.NEW, epic);
+        Epic epic = epicTasks.get(subtaskDto.getEpicId());
+        Subtask subtask = new Subtask(subtaskDto.getName(), subtaskDto.getDescription(), Condition.NEW, epic);
         subTasks.put(subtask.getId(), subtask);
         epic.getSubtasks().add(subtask);
-
-
+        checkCondition(epic);
+        epicTasks.put(epic.getId(), epic);
     }
 
-    public static void createEpic(String name, String description) {
-        Epic epic = new Epic(name, description, Condition.NEW);
+    public static void createEpic(EpicDto epicDto) {
+        Epic epic = new Epic(epicDto.getName(), epicDto.getDescription(), Condition.NEW);
         epicTasks.put(epic.getId(), epic);
     }
 
@@ -66,7 +67,6 @@ public final class TaskManager {
         for (Integer i : epicTasks.keySet()) {
             epicTasks.get(i).setCondition(Condition.NEW);
         }
-        //TODO  про стастусы что то
     }
 
     public static Task getTaskById(Integer id) {
@@ -115,8 +115,9 @@ public final class TaskManager {
     }
 
     private static void checkCondition(Epic epic) {
-        if ((epic.getSubtasks().isEmpty() || epic.getSubtasks().stream().allMatch(x -> x.getCondition() == Condition.NEW))
-                && epic.getCondition() != Condition.NEW) {
+
+        if ((epic.getSubtasks().isEmpty()
+                || epic.getSubtasks().stream().allMatch(x -> x.getCondition() == Condition.NEW))) {
             epic.setCondition(Condition.NEW);
         } else if (epic.getSubtasks().stream().allMatch(x -> x.getCondition() == Condition.DONE)
                 && epic.getCondition() != Condition.DONE) {
@@ -142,10 +143,23 @@ public final class TaskManager {
     public static void removeById(int id){
         Task task = getTaskById(id);
         if (task == null){
-            System.out.println("Такого Эпика не существует");
+            System.out.println("Такой задачи не сущесвует.");
             return;
         }
-        if ()
+        if (task instanceof Subtask){
+            Subtask subtask = (Subtask) task;
+            Epic epic = epicTasks.get(subtask.getEpicId());
+            epic.getSubtasks().remove(subTasks.get(subtask.getId()));
+            subTasks.remove(subtask.getId());
+            checkCondition(epic);
+            epicTasks.put(epic.getId(), epic);
+        } else if (task instanceof Epic) {
+            Epic epic = (Epic) task;
+            epic.getSubtasks().forEach(x -> subTasks.remove(x.getId()));
+            epicTasks.remove(epic.getId());
+        }else {
+            tasks.remove(task.getId());
+        }
 
     }
 

@@ -8,11 +8,5 @@ public class EpicDto extends TaskDto{
         super(id, name, description, condition);
     }
 
-    public EpicDto(int id) {
-        super(id, null, null, null);
-    }
 
-    public EpicDto(int id, String name, String description) {
-        super(id, name, description, null);
-    }
 }
