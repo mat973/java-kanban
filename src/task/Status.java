@@ -1,6 +1,6 @@
 package task;
 
-public enum Condition {
+public enum Status {
     NEW,
     IN_PROGRESS,
     DONE

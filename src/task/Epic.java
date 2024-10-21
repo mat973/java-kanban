@@ -6,14 +6,14 @@ import java.util.ArrayList;
 public class Epic extends Task {
     private ArrayList<Subtask> subtasks;
 
-     Epic(String name, String description, Condition condition) {
-        super(name, description, condition);
-        this.subtasks = new ArrayList<>();
-    }
-
     protected Epic(Epic epic) {
         super(epic);
         this.subtasks = epic.subtasks;
+    }
+
+    public Epic(int id, String name, String description, Status status) {
+        super(id, name, description, status);
+        this.subtasks = new ArrayList<>();
     }
 
     public ArrayList<Subtask> getSubtasks() {
@@ -23,7 +23,7 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-         String result ="[Название:" + getName() + ", описание:" + getDescription() + ", состояние:"
+         String result ="ID:" + getId()+" [Название:" + getName() + ", описание:" + getDescription() + ", состояние:"
                  + getCondition().name() + ". Подзадачи:";
         for (int i = 0; i < subtasks.size(); i++) {
             result = result +"ID: "+ subtasks.get(i).getId() + ", имя: " + subtasks.get(i).getName() + ", состояние: "

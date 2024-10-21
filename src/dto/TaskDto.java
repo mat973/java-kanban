@@ -1,17 +1,17 @@
-package Dto;
+package dto;
 
-import task.Condition;
+import task.Status;
 
 public class TaskDto {
     private int id;
     private String description;
-    private Condition condition;
+    private Status status;
     private String name;
 
-    public TaskDto(int id, String name , String description, Condition condition) {
+    public TaskDto(int id, String name , String description, Status status) {
         this.id = id;
         this.description = description;
-        this.condition = condition;
+        this.status = status;
         this.name = name;
     }
 
@@ -31,12 +31,12 @@ public class TaskDto {
         this.description = description;
     }
 
-    public Condition getCondition() {
-        return condition;
+    public Status getCondition() {
+        return status;
     }
 
-    public void setCondition(Condition condition) {
-        this.condition = condition;
+    public void setCondition(Status status) {
+        this.status = status;
     }
 
     public String getName() {

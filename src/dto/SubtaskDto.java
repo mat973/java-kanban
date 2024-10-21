@@ -1,14 +1,13 @@
-package Dto;
+package dto;
 
-import task.Condition;
-import task.Epic;
+import task.Status;
 
 public class SubtaskDto extends TaskDto{
     private int epicId;
 
 
-    public SubtaskDto(int id, String name, String description, Condition condition, EpicDto epicDto) {
-        super(id, name, description, condition);
+    public SubtaskDto(int id, String name, String description, Status status, EpicDto epicDto) {
+        super(id, name, description, status);
         this.epicId = epicDto.getId();
     }
 

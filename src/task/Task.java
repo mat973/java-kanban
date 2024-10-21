@@ -3,23 +3,17 @@ package task;
 
 
 public class Task {
+
     protected int id;
     protected String description;
-    protected Condition condition;
+    protected Status status;
     protected String name;
 
 
-    protected Task(int id,  String name, String description, Condition condition) {
+    protected Task(int id,  String name, String description, Status status) {
         this.id = id;
         this.description = description;
-        this.condition = condition;
-        this.name = name;
-    }
-
-    protected Task(String name , String description, Condition condition ) {
-        this.id = TaskManager.getId();
-        this.description = description;
-        this.condition = condition;
+        this.status = status;
         this.name = name;
     }
 
@@ -27,7 +21,7 @@ public class Task {
     protected Task(Task task) {
         this.id = task.id;
         this.description = task.description;
-        this.condition = task.condition;
+        this.status = task.status;
         this.name = task.name;
     }
 
@@ -41,8 +35,8 @@ public class Task {
         return description;
     }
 
-    protected Condition getCondition() {
-        return condition;
+    protected Status getCondition() {
+        return status;
     }
 
     protected String getName() {
@@ -53,8 +47,8 @@ public class Task {
         this.description = description;
     }
 
-    protected void setCondition(Condition condition) {
-        this.condition = condition;
+    protected void setCondition(Status status) {
+        this.status = status;
     }
 
     protected void setName(String name) {
@@ -63,7 +57,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "[Название:" + getName() + ", описание:" + getDescription() + ", состояние:"
+        return "ID:" + getId()+" [Название:" + getName() + ", описание:" + getDescription() + ", состояние:"
                 + getCondition().name()+ "]";
     }
 
