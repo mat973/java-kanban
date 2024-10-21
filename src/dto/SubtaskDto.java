@@ -2,7 +2,7 @@ package dto;
 
 import task.Status;
 
-public class SubtaskDto extends TaskDto{
+public class SubtaskDto extends TaskDto {
     private int epicId;
 
 
@@ -10,7 +10,6 @@ public class SubtaskDto extends TaskDto{
         super(id, name, description, status);
         this.epicId = epicDto.getId();
     }
-
 
 
     public int getEpicId() {

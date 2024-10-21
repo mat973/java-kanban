@@ -8,7 +8,7 @@ public class TaskDto {
     private Status status;
     private String name;
 
-    public TaskDto(int id, String name , String description, Status status) {
+    public TaskDto(int id, String name, String description, Status status) {
         this.id = id;
         this.description = description;
         this.status = status;

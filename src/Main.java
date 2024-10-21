@@ -11,12 +11,12 @@ public class Main {
         TaskManager taskManager = new TaskManager();
 
         System.out.println("Поехали!");
-        TaskDto taskDto = new TaskDto(0,"task", "Desc", Status.NEW );
+        TaskDto taskDto = new TaskDto(0, "task", "Desc", Status.NEW);
         EpicDto epicDto1 = new EpicDto(1, "Epic1", "Desck1", Status.NEW);
         EpicDto epicDto2 = new EpicDto(2, "Epic2", "Desck3", Status.NEW);
-        SubtaskDto subtaskDto1 = new SubtaskDto(3,"Sub1", "Description1", Status.NEW,epicDto1);
-        SubtaskDto subtaskDto2 = new SubtaskDto(4,"Sub2", "Description2", Status.NEW,epicDto1);
-        SubtaskDto subtaskDto3 = new SubtaskDto(5,"Sub3", "Description3", Status.NEW,epicDto2);
+        SubtaskDto subtaskDto1 = new SubtaskDto(3, "Sub1", "Description1", Status.NEW, epicDto1);
+        SubtaskDto subtaskDto2 = new SubtaskDto(4, "Sub2", "Description2", Status.NEW, epicDto1);
+        SubtaskDto subtaskDto3 = new SubtaskDto(5, "Sub3", "Description3", Status.NEW, epicDto2);
 
         taskManager.createTask(taskDto);
         taskManager.createEpic(epicDto1);

@@ -1,7 +1,6 @@
 package task;
 
 
-
 public class Task {
 
     protected int id;
@@ -10,7 +9,7 @@ public class Task {
     protected String name;
 
 
-    protected Task(int id,  String name, String description, Status status) {
+    protected Task(int id, String name, String description, Status status) {
         this.id = id;
         this.description = description;
         this.status = status;
@@ -24,7 +23,6 @@ public class Task {
         this.status = task.status;
         this.name = task.name;
     }
-
 
 
     protected int getId() {
@@ -57,8 +55,8 @@ public class Task {
 
     @Override
     public String toString() {
-        return "ID:" + getId()+" [Название:" + getName() + ", описание:" + getDescription() + ", состояние:"
-                + getCondition().name()+ "]";
+        return "ID:" + getId() + " [Название:" + getName() + ", описание:" + getDescription() + ", состояние:"
+                + getCondition().name() + "]";
     }
 
 
