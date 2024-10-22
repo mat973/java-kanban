@@ -10,36 +10,25 @@ import java.util.HashMap;
 public final class TaskManager {
     private int currentId;
 
-    private final HashMap<Integer, Task> tasks;
-    private final HashMap<Integer, Epic> epicTasks;
-    private final HashMap<Integer, Subtask> subTasks;
+    private final HashMap<Integer, Task> tasks = new HashMap<>();
+    private final HashMap<Integer, Epic> epicTasks = new HashMap<>();
+    private final HashMap<Integer, Subtask> subTasks = new HashMap<>();
 
-    public TaskManager() {
-        this.currentId = 0;
-        epicTasks = new HashMap<>();
-        tasks = new HashMap<>();
-        subTasks = new HashMap<>();
-    }
+
 
     public ArrayList<Task> getTasks() {
-        ArrayList<Task> list = new ArrayList<>();
-        tasks.keySet().forEach(x -> list.add(tasks.get(x)));
-        return list;
+        return new ArrayList<>(tasks.values());
     }
 
     public ArrayList<Epic> getEpicTasks() {
-        ArrayList<Epic> list = new ArrayList<>();
-        epicTasks.keySet().forEach(x -> list.add(epicTasks.get(x)));
-        return list;
+        return new ArrayList<>(epicTasks.values());
     }
 
     public ArrayList<Subtask> getSubTasks() {
-        ArrayList<Subtask> list = new ArrayList<>();
-        subTasks.keySet().forEach(x -> list.add(subTasks.get(x)));
-        return list;
+        return new ArrayList<>(subTasks.values());
     }
 
-    public int generateId() {
+    private int generateId() {
         return currentId++;
     }
 
@@ -79,51 +68,48 @@ public final class TaskManager {
     public void removeAllSubTasks() {
         subTasks.clear();
         for (Integer i : epicTasks.keySet()) {
-            epicTasks.get(i).setCondition(Status.NEW);
+            //epicTasks.get(i).setCondition(Status.NEW); // эта строчка обновляет статусы эпика
             epicTasks.get(i).getSubtasks().clear();
+            checkCondition(epicTasks.get(i));
         }
     }
 
     public Task getTaskById(int id) {
-        if (!existedTask(id) || !tasks.containsKey(id)) {
+        if (!tasks.containsKey(id)) {
             System.out.println("Такой задачи не существует");
             return null;
         }
-        return new Task(tasks.get(id));
+
+        //return new Task(tasks.get(id)); я это делаю что бы нельзя было влиять на обьекты
+        // в мапе и как то их изменять вне этого класса, да я возможно проигрываю по памяти, но я думал,
+        // что гарбедж коллектор уберет и все будет хорошо. я просто не понимаю на сколько это критичноЮ для меня
+        // это было про инкапсуляцию и в моей голове вроде правильно.
+
+        //  По поводу ДТО я хотел спрятать мои классы сущности и что бы для пользователя были только ДТО,
+        // типо тоже инкапсуляция ... не уверен как правильно
+        return tasks.get(id);
     }
 
     public Epic getEpicById(int id) {
-        if (!existedTask(id) || !epicTasks.containsKey(id)) {
+        if (!epicTasks.containsKey(id)) {
             System.out.println("Такого эпика не существует");
             return null;
         }
-        return new Epic(epicTasks.get(id));
+        return epicTasks.get(id);
     }
 
     public Subtask getSubtaskById(int id) {
-        if (!existedTask(id) || !subTasks.containsKey(id)) {
+        if (!subTasks.containsKey(id)) {
             System.out.println("Такой подзадачи не существует");
             return null;
         }
-        return new Subtask(subTasks.get(id));
+        return subTasks.get(id);
     }
 
-    public boolean existedTask(int id) {
-        if (tasks.containsKey(id)) {
-            return true;
-        } else if (epicTasks.containsKey(id)) {
-            return true;
-        } else if (subTasks.containsKey(id)) {
-            return true;
-        } else {
-            System.out.println("Задачи с таким id не существует");
-            return false;
-        }
-    }
 
     public void changeTask(TaskDto taskDto) {
 
-        if (!existedTask(taskDto.getId()) || !tasks.containsKey(taskDto.getId())) {
+        if (!tasks.containsKey(taskDto.getId())) {
             System.out.println("Такой задачи не существует");
             return;
         }
@@ -134,7 +120,7 @@ public final class TaskManager {
     }
 
     public void changeSubTask(SubtaskDto subtaskDto) {
-        if (!existedTask(subtaskDto.getId()) || !subTasks.containsKey(subtaskDto.getId())) {
+        if (!subTasks.containsKey(subtaskDto.getId())) {
             System.out.println("Такой подзадачи не существует");
             return;
         }
@@ -168,7 +154,7 @@ public final class TaskManager {
     }
 
     public void changeEpic(EpicDto epicDto) {
-        if (!existedTask(epicDto.getId()) || !epicTasks.containsKey(epicDto.getId())) {
+        if (!epicTasks.containsKey(epicDto.getId())) {
             System.out.println("Такого Эпика не существует");
             return;
         }
