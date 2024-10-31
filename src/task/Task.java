@@ -1,6 +1,7 @@
 package task;
 
 
+import java.nio.file.FileStore;
 import java.util.Objects;
 
 public class Task {
@@ -11,7 +12,7 @@ public class Task {
     protected String name;
 
 
-    protected Task(int id, String name, String description, Status status) {
+    public Task(int id, String name, String description, Status status) {
         this.id = id;
         this.description = description;
         this.status = status;
@@ -27,39 +28,40 @@ public class Task {
     }
 
 
-    protected int getId() {
+    public int getId() {
         return id;
     }
 
-    protected String getDescription() {
+    public String getDescription() {
         return description;
     }
 
-    protected Status getCondition() {
+    public Status getStatus() {
         return status;
     }
 
-    protected String getName() {
+    public String getName() {
         return name;
     }
 
-    protected void setDescription(String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    protected void setCondition(Status status) {
+    public void setCondition(Status status) {
         this.status = status;
     }
 
-    protected void setName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
     @Override
     public String toString() {
         return "ID:" + getId() + " [Название:" + getName() + ", описание:" + getDescription() + ", состояние:"
-                + getCondition().name() + "]";
+                + getStatus().name() + "]";
     }
+
 
     @Override
     public boolean equals(Object o) {

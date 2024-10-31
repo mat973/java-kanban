@@ -1,16 +1,17 @@
-package task;
+package managers;
 
 import dto.EpicDto;
 import dto.SubtaskDto;
 import dto.TaskDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import task.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryTaskManagerTest {
     private TaskManager taskManager;
-    private  HistoryManager historyManager;
+    private HistoryManager historyManager;
     private TaskDto taskDto;
     private EpicDto epicDto1;
     private EpicDto epicDto2;
@@ -19,10 +20,10 @@ class InMemoryTaskManagerTest {
     private SubtaskDto subtaskDto3;
 
     @BeforeEach
-    public  void init(){
+    public void init() {
         historyManager = Managers.getDefaultHistory();
         taskManager = Managers.getDefault(historyManager);
-       taskDto = new TaskDto(0, "task", "Desc", Status.NEW);
+        taskDto = new TaskDto(0, "task", "Desc", Status.NEW);
         epicDto1 = new EpicDto(1, "Epic1", "Desck1", Status.NEW);
         epicDto2 = new EpicDto(2, "Epic2", "Desck3", Status.NEW);
         subtaskDto1 = new SubtaskDto(3, "Sub1", "Description1", Status.NEW, epicDto1);
@@ -39,25 +40,28 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void taskShouldBeEqualsWithEqualsId(){
-       Task task1 = taskManager.getTaskById(0);
-       Task task2 = taskManager.getTaskById(0);
-       assertEquals(task1, task2);
+    public void taskShouldBeEqualsWithEqualsId() {
+        Task task1 = taskManager.getTaskById(0);
+        Task task2 = taskManager.getTaskById(0);
+        assertEquals(task1, task2);
     }
+
     @Test
-    public void epicShouldBeEqualsWithEqualsId(){
+    public void epicShouldBeEqualsWithEqualsId() {
         Epic task1 = taskManager.getEpicById(1);
         Epic task2 = taskManager.getEpicById(1);
         assertEquals(task1, task2);
     }
+
     @Test
-    public void subtaskShouldBeEqualsWithEqualsId(){
+    public void subtaskShouldBeEqualsWithEqualsId() {
         Subtask task1 = taskManager.getSubtaskById(3);
         Subtask task2 = taskManager.getSubtaskById(3);
         assertEquals(task1, task2);
     }
+
     @Test
-    public void testHistorySizeAndUpdate(){
+    public void testHistorySizeAndUpdate() {
         taskManager.getTaskById(0);
         taskManager.getEpicById(1);
         taskManager.getSubtaskById(4);
@@ -83,19 +87,18 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void checkEpicCondition(){
+    public void checkEpicCondition() {
         subtaskDto1.setCondition(Status.IN_PROGRESS);
         subtaskDto2.setCondition(Status.DONE);
         subtaskDto3.setCondition(Status.DONE);
         taskManager.changeSubTask(subtaskDto3);
         taskManager.changeSubTask(subtaskDto1);
         taskManager.changeSubTask(subtaskDto2);
-        assertEquals(Status.IN_PROGRESS, taskManager.getEpicById(epicDto1.getId()).getCondition());
-        assertEquals(Status.DONE, taskManager.getEpicById(epicDto2.getId()).getCondition());
+        assertEquals(Status.IN_PROGRESS, taskManager.getEpicById(epicDto1.getId()).getStatus());
+        assertEquals(Status.DONE, taskManager.getEpicById(epicDto2.getId()).getStatus());
         taskManager.removeSubtaskById(subtaskDto3.getId());
-        assertEquals(Status.NEW, taskManager.getEpicById(epicDto2.getId()).getCondition());
+        assertEquals(Status.NEW, taskManager.getEpicById(epicDto2.getId()).getStatus());
     }
-
 
 
 }

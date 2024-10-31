@@ -2,6 +2,9 @@
 import dto.EpicDto;
 import dto.SubtaskDto;
 import dto.TaskDto;
+import managers.HistoryManager;
+import managers.Managers;
+import managers.TaskManager;
 import task.*;
 
 
@@ -65,33 +68,33 @@ public class Main {
         taskManager.changeSubTask(subtaskDto3);
         taskManager.changeSubTask(subtaskDto1);
         taskManager.changeSubTask(subtaskDto2);
-//
-//        System.out.println(inMemoryTaskManager.getTasks());
-//        System.out.println(inMemoryTaskManager.getEpicTasks());
-//        System.out.println(inMemoryTaskManager.getSubTasks());
-//
-//        subtaskDto1.setCondition(Status.DONE);
-//        inMemoryTaskManager.changeSubTask(subtaskDto1);
-//        inMemoryTaskManager.removeSubtaskById(subtaskDto3.getId());
-//
-//        System.out.println(inMemoryTaskManager.getTasks());
-//        System.out.println(inMemoryTaskManager.getEpicTasks());
-//        System.out.println(inMemoryTaskManager.getSubTasks());
-//
-//        subtaskDto2.setCondition(Status.IN_PROGRESS);
-//        inMemoryTaskManager.changeSubTask(subtaskDto2);
-//        inMemoryTaskManager.removeEpicById((epicDto2.getId()));
-//        taskDto.setCondition(Status.DONE);
-//        inMemoryTaskManager.changeTask(taskDto);
-//
-//        System.out.println(inMemoryTaskManager.getTasks());
-//        System.out.println(inMemoryTaskManager.getEpicTasks());
-//        System.out.println(inMemoryTaskManager.getSubTasks());
-//
-//        inMemoryTaskManager.removeAllSubTasks();
-//        System.out.println(inMemoryTaskManager.getTasks());
-//        System.out.println(inMemoryTaskManager.getEpicTasks());
-//        System.out.println(inMemoryTaskManager.getSubTasks());
+
+        System.out.println(taskManager.getTasks());
+        System.out.println(taskManager.getEpicTasks());
+        System.out.println(taskManager.getSubTasks());
+
+        subtaskDto1.setCondition(Status.DONE);
+        taskManager.changeSubTask(subtaskDto1);
+        taskManager.removeSubtaskById(subtaskDto3.getId());
+
+        System.out.println(taskManager.getTasks());
+        System.out.println(taskManager.getEpicTasks());
+        System.out.println(taskManager.getSubTasks());
+
+        subtaskDto2.setCondition(Status.IN_PROGRESS);
+        taskManager.changeSubTask(subtaskDto2);
+        taskManager.removeEpicById((epicDto2.getId()));
+        taskDto.setCondition(Status.DONE);
+        taskManager.changeTask(taskDto);
+
+        System.out.println(taskManager.getTasks());
+        System.out.println(taskManager.getEpicTasks());
+        System.out.println(taskManager.getSubTasks());
+
+        taskManager.removeAllSubTasks();
+        System.out.println(taskManager.getTasks());
+        System.out.println(taskManager.getEpicTasks());
+        System.out.println(taskManager.getSubTasks());
 
     }
 }

@@ -1,20 +1,25 @@
-package task;
+package managers;
 
 import dto.EpicDto;
 import dto.SubtaskDto;
 import dto.TaskDto;
+import task.Epic;
+import task.Status;
+import task.Subtask;
+import task.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
-public final class InMemoryTaskManager  implements TaskManager {
+public final class InMemoryTaskManager implements TaskManager {
     private int currentId;
 
-    private final HashMap<Integer, Task> tasks = new HashMap<>();
-    private final HashMap<Integer, Epic> epicTasks = new HashMap<>();
-    private final HashMap<Integer, Subtask> subTasks = new HashMap<>();
+    private final Map<Integer, Task> tasks = new HashMap<>();
+    private final Map<Integer, Epic> epicTasks = new HashMap<>();
+    private final Map<Integer, Subtask> subTasks = new HashMap<>();
 
-    private HistoryManager historyManager;
+    private final HistoryManager historyManager;
 
     public InMemoryTaskManager(HistoryManager historyManager) {
         this.historyManager = historyManager;
@@ -42,7 +47,7 @@ public final class InMemoryTaskManager  implements TaskManager {
     @Override
     public void createTask(TaskDto taskDto) {
         Task task = new Task(generateId(), taskDto.getName(), taskDto.getDescription(), Status.NEW);
-        tasks.put(task.id, task);
+        tasks.put(task.getId(), task);
     }
 
     @Override
@@ -157,10 +162,10 @@ public final class InMemoryTaskManager  implements TaskManager {
     private void checkCondition(Epic epic) {
 
         if ((epic.getSubtasks().isEmpty()
-                || epic.getSubtasks().stream().allMatch(x -> x.getCondition() == Status.NEW))) {
+                || epic.getSubtasks().stream().allMatch(x -> x.getStatus() == Status.NEW))) {
             epic.setCondition(Status.NEW);
-        } else if (epic.getSubtasks().stream().allMatch(x -> x.getCondition() == Status.DONE)
-                && epic.getCondition() != Status.DONE) {
+        } else if (epic.getSubtasks().stream().allMatch(x -> x.getStatus() == Status.DONE)
+                && epic.getStatus() != Status.DONE) {
             epic.setCondition(Status.DONE);
         } else {
             epic.setCondition(Status.IN_PROGRESS);
@@ -215,7 +220,6 @@ public final class InMemoryTaskManager  implements TaskManager {
         checkCondition(epic);
         epicTasks.put(epic.getId(), epic);
     }
-
 
 
 }

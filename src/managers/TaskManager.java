@@ -1,17 +1,21 @@
-package task;
+package managers;
 
 import dto.EpicDto;
 import dto.SubtaskDto;
 import dto.TaskDto;
+import task.Epic;
+import task.Subtask;
+import task.Task;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public interface TaskManager{
-    ArrayList<Task> getTasks();
+public interface TaskManager {
+    List<Task> getTasks();
 
-    ArrayList<Epic> getEpicTasks();
+    List<Epic> getEpicTasks();
 
-    ArrayList<Subtask> getSubTasks();
+    List<Subtask> getSubTasks();
 
     void createTask(TaskDto taskDto);
 

@@ -24,10 +24,10 @@ public class Epic extends Task {
     @Override
     public String toString() {
         String result = "ID:" + getId() + " [Название:" + getName() + ", описание:" + getDescription() + ", состояние:"
-                + getCondition().name() + ". Подзадачи:";
+                + getStatus().name() + ". Подзадачи:";
         for (int i = 0; i < subtasks.size(); i++) {
             result = result + "ID: " + subtasks.get(i).getId() + ", имя: " + subtasks.get(i).getName() + ", состояние: "
-                    + subtasks.get(i).getCondition();
+                    + subtasks.get(i).getStatus();
             if (i < subtasks.size() - 1)
                 result += ", ";
 
