@@ -13,10 +13,6 @@ public class InMemoryHistoryManager implements HistoryManager {
     public void addToHistory(Task task) {
         if (task == null) {
             System.out.println("Задача не может быть Null");
-            //по логике эта строчка не может быть, тк она вызывается из getById, а я проверяю их на contain in Map...
-            // короче не могу представить этот кейс, я понимаю что я не всегда буду знать код наизусть
-            // и он может быть и не мой
-            // и хороша практика делать так. окей
             return;
         }
         history.add(task);
@@ -29,7 +25,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public ArrayList<Task> getHistory() {
-        return history;
+        return new ArrayList<>(history);
     }
 
 }
