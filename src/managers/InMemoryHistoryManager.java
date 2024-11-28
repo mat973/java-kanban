@@ -2,12 +2,15 @@ package managers;
 
 import task.Task;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
 
-    private static class Node{
+    private static class Node {
         Task task;
         Node prev;
         Node next;
@@ -31,7 +34,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
 
         int taskId = task.getId();
-        if (taskMap.containsKey(taskId)){
+        if (taskMap.containsKey(taskId)) {
             remove(taskId);
         }
 
@@ -43,7 +46,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     private void linkLast(Task task) {
         Node node = new Node(task);
-        if (tail == null){
+        if (tail == null) {
             head = node;
         } else {
             tail.next = node;
@@ -56,7 +59,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     public List<Task> getHistory() {
         List<Task> tasks = new ArrayList<>();
         Node currentNode = head;
-        while (currentNode != null){
+        while (currentNode != null) {
             tasks.add(currentNode.task);
             currentNode = currentNode.next;
         }

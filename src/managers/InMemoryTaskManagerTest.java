@@ -5,9 +5,12 @@ import dto.SubtaskDto;
 import dto.TaskDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import task.*;
+import task.Epic;
+import task.Status;
+import task.Subtask;
+import task.Task;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class InMemoryTaskManagerTest {
     private TaskManager taskManager;
