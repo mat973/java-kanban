@@ -66,20 +66,21 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
     public void remove(int id) {
         Node node = taskMap.get(id);
+        if (node != null) {
+            if (node.prev != null) {
+                node.prev.next = node.next;
+            } else {
+                head = node.next;
+            }
 
-        if (node.prev != null){
-            node.prev.next = node.next;
-        }else {
-            head = node.next;
+            if (node.next != null) {
+                node.next.prev = node.prev;
+            } else {
+                tail = node.prev;
+            }
+
+            taskMap.remove(id);
         }
-
-        if (node.next != null){
-            node.next.prev = node.prev;
-        }else {
-            tail = node.prev;
-        }
-
-        taskMap.remove(id);
     }
 
 }

@@ -11,9 +11,9 @@ import task.*;
 public class Main {
 
     public static void main(String[] args) {
+
         HistoryManager historyManager = Managers.getDefaultHistory();
         TaskManager taskManager = Managers.getDefault(historyManager);
-       
 
         System.out.println("Поехали!");
         TaskDto taskDto = new TaskDto(0, "task", "Desc", Status.NEW);
@@ -23,7 +23,6 @@ public class Main {
         SubtaskDto subtaskDto2 = new SubtaskDto(4, "Sub2", "Description2", Status.NEW, epicDto1);
         SubtaskDto subtaskDto3 = new SubtaskDto(5, "Sub3", "Description3", Status.NEW, epicDto2);
 
-
         taskManager.createTask(taskDto);
         taskManager.createEpic(epicDto1);
         taskManager.createEpic(epicDto2);
@@ -31,27 +30,45 @@ public class Main {
         taskManager.createSubTusk(subtaskDto2);
         taskManager.createSubTusk(subtaskDto3);
 
-
-//        System.out.println(taskManager.getTasks());
-//        System.out.println(taskManager.getEpicTasks());
-//        System.out.println(taskManager.getSubTasks());
-
+        System.out.println(historyManager.getHistory());
         taskManager.getTaskById(0);
-        taskManager.getEpicById(1);
+        System.out.println(taskManager.getEpicById(1));
         taskManager.getEpicById(2);
         taskManager.getSubtaskById(3);
         taskManager.getSubtaskById(4);
         taskManager.getSubtaskById(5);
         System.out.println(historyManager.getHistory());
 
-        taskManager.getSubtaskById(5);
-        taskManager.getSubtaskById(4);
-        taskManager.getSubtaskById(3);
-
-        taskManager.getEpicById(2);
-        taskManager.getEpicById(1);
-        taskManager.getTaskById(0);
+        taskManager.removeTaskById(0);
         System.out.println(historyManager.getHistory());
+        taskManager.removeEpicById(1);
+        System.out.println();
+        System.out.println(historyManager.getHistory());
+
+    }
+}
+//
+//
+////        System.out.println(taskManager.getTasks());
+////        System.out.println(taskManager.getEpicTasks());
+////        System.out.println(taskManager.getSubTasks());
+//
+//        taskManager.getTaskById(0);
+//        taskManager.getEpicById(1);
+//        taskManager.getEpicById(2);
+//        taskManager.getSubtaskById(3);
+//        taskManager.getSubtaskById(4);
+//        taskManager.getSubtaskById(5);
+//        System.out.println(historyManager.getHistory());
+//
+//        taskManager.getSubtaskById(5);
+//        taskManager.getSubtaskById(4);
+//        taskManager.getSubtaskById(3);
+//
+//        taskManager.getEpicById(2);
+//        taskManager.getEpicById(1);
+//        taskManager.getTaskById(0);
+//        System.out.println(historyManager.getHistory());
 //        System.out.println(historyManager.getHistory().getFirst() + "  " +historyManager.getHistory().size());
 //        taskManager.getSubtaskById(4);
 //        System.out.println(historyManager.getHistory().getFirst() + "  " +historyManager.getHistory().size());
@@ -99,5 +116,5 @@ public class Main {
 //        System.out.println(taskManager.getEpicTasks());
 //        System.out.println(taskManager.getSubTasks());
 
-    }
-}
+  //  }
+//}
