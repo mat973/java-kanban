@@ -55,6 +55,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         tail = node;
     }
 
+    @SuppressWarnings("checkstyle:WhitespaceAround")
     @Override
     public List<Task> getHistory() {
         List<Task> tasks = new ArrayList<>();
