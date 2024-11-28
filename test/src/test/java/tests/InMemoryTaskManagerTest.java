@@ -1,4 +1,4 @@
-package test;
+package tests;
 
 import dto.EpicDto;
 import dto.SubtaskDto;
