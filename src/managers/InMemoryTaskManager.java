@@ -208,7 +208,6 @@ public final class InMemoryTaskManager implements TaskManager {
             historyManager.remove(x.getId());
         });
         historyManager.remove(id);
-        // epicTasks.remove(epic.getId());
         epicTasks.remove(id);
     }
 

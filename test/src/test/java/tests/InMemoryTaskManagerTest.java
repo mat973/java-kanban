@@ -13,6 +13,7 @@ import task.Status;
 import task.Subtask;
 import task.Task;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class InMemoryTaskManagerTest {
     private TaskManager taskManager;
@@ -67,7 +68,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void testHistorySizeAndUpdate() {
-        assertEquals(0, historyManager.getHistory().size());
+        assertTrue(historyManager.getHistory().isEmpty());
         taskManager.getTaskById(0);
         assertEquals(1, historyManager.getHistory().size());
         taskManager.getEpicById(1);
