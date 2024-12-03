@@ -144,8 +144,8 @@ public final class InMemoryTaskManager implements TaskManager {
             System.out.println("Такой подзадачи не существует");
             return;
         }
-        Subtask subtask = new Subtask(subtaskDto.getId(), subtaskDto.getName()
-                , subtaskDto.getDescription(), subtaskDto.getCondition(), subtaskDto.getEpicId());
+        Subtask subtask = new Subtask(subtaskDto.getId(), subtaskDto.getName(),
+                subtaskDto.getDescription(), subtaskDto.getCondition(), subtaskDto.getEpicId());
         subTasks.put(subtaskDto.getId(), subtask);
         Epic epic = epicTasks.get(subtask.getEpicId());
         ArrayList<Subtask> list = epic.getSubtasks();
@@ -192,6 +192,7 @@ public final class InMemoryTaskManager implements TaskManager {
             System.out.println("Такой задачи не существует");
             return;
         }
+        historyManager.remove(id);
         tasks.remove(id);
     }
 
@@ -202,8 +203,11 @@ public final class InMemoryTaskManager implements TaskManager {
             return;
         }
         Epic epic = epicTasks.get(id);
-        epic.getSubtasks().forEach(x -> subTasks.remove(x.getId()));
-        epicTasks.remove(epic.getId());
+        epic.getSubtasks().forEach(x -> {
+            subTasks.remove(x.getId());
+            historyManager.remove(x.getId());
+        });
+        historyManager.remove(id);
         epicTasks.remove(id);
     }
 
@@ -216,6 +220,7 @@ public final class InMemoryTaskManager implements TaskManager {
         Subtask subtask = subTasks.get(id);
         Epic epic = epicTasks.get(subtask.getEpicId());
         epic.getSubtasks().remove(subTasks.get(subtask.getId()));
+        historyManager.remove(id);
         subTasks.remove(subtask.getId());
         checkCondition(epic);
         epicTasks.put(epic.getId(), epic);

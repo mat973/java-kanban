@@ -1,13 +1,19 @@
-package managers;
+package tests;
 
 import dto.EpicDto;
 import dto.SubtaskDto;
 import dto.TaskDto;
+import managers.HistoryManager;
+import managers.Managers;
+import managers.TaskManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import task.*;
-
-import static org.junit.jupiter.api.Assertions.*;
+import task.Epic;
+import task.Status;
+import task.Subtask;
+import task.Task;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class InMemoryTaskManagerTest {
     private TaskManager taskManager;
@@ -62,27 +68,46 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void testHistorySizeAndUpdate() {
+        assertTrue(historyManager.getHistory().isEmpty());
+        taskManager.getTaskById(0);
+        assertEquals(1, historyManager.getHistory().size());
+        taskManager.getEpicById(1);
+        assertEquals(2, historyManager.getHistory().size());
+        taskManager.getEpicById(2);
+        assertEquals(3, historyManager.getHistory().size());
+        taskManager.getSubtaskById(3);
+        assertEquals(4, historyManager.getHistory().size());
+        taskManager.getSubtaskById(4);
+        assertEquals(5, historyManager.getHistory().size());
+        taskManager.getSubtaskById(5);
+        assertEquals(6, historyManager.getHistory().size());
+        assertEquals(taskDto.getId(), historyManager.getHistory().get(0).getId());
+        assertEquals(epicDto1.getId(), historyManager.getHistory().get(1).getId());
+        assertEquals(epicDto2.getId(), historyManager.getHistory().get(2).getId());
+        assertEquals(subtaskDto1.getId(), historyManager.getHistory().get(3).getId());
+        assertEquals(subtaskDto2.getId(), historyManager.getHistory().get(4).getId());
+        assertEquals(subtaskDto3.getId(), historyManager.getHistory().get(5).getId());
         taskManager.getTaskById(0);
         taskManager.getEpicById(1);
+        taskManager.getEpicById(2);
+        taskManager.getSubtaskById(3);
         taskManager.getSubtaskById(4);
+        taskManager.getSubtaskById(5);
+        assertEquals(6, historyManager.getHistory().size());
+        taskManager.getSubtaskById(5);
+        taskManager.getSubtaskById(4);
+        taskManager.getSubtaskById(3);
+
+        taskManager.getEpicById(2);
+        taskManager.getEpicById(1);
         taskManager.getTaskById(0);
-        taskManager.getTaskById(0);
-        taskManager.getEpicById(1);
 
-        taskManager.getEpicById(1);
-        taskManager.getEpicById(1);
-
-        taskManager.getSubtaskById(4);
-        taskManager.getSubtaskById(4);
-
-        assertEquals(10, historyManager.getHistory().size());
-        assertEquals(0, historyManager.getHistory().getFirst().getId());
-        taskManager.getSubtaskById(4);
-        assertEquals(10, historyManager.getHistory().size());
-        assertEquals(1, historyManager.getHistory().getFirst().getId());
-        taskManager.getSubtaskById(4);
-        assertEquals(10, historyManager.getHistory().size());
-        assertEquals(4, historyManager.getHistory().getFirst().getId());
+        assertEquals(taskDto.getId(), historyManager.getHistory().get(5).getId());
+        assertEquals(epicDto1.getId(), historyManager.getHistory().get(4).getId());
+        assertEquals(epicDto2.getId(), historyManager.getHistory().get(3).getId());
+        assertEquals(subtaskDto1.getId(), historyManager.getHistory().get(2).getId());
+        assertEquals(subtaskDto2.getId(), historyManager.getHistory().get(1).getId());
+        assertEquals(subtaskDto3.getId(), historyManager.getHistory().get(0).getId());
 
     }
 
