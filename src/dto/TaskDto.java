@@ -31,7 +31,7 @@ public class TaskDto {
         this.description = description;
     }
 
-    public Status getCondition() {
+    public Status getStatus() {
         return status;
     }
 
