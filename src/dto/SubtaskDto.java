@@ -11,12 +11,8 @@ public class SubtaskDto extends TaskDto {
         this.epicId = epicDto.getId();
     }
 
-
     public int getEpicId() {
         return epicId;
     }
 
-    public void setEpicId(int epicId) {
-        this.epicId = epicId;
-    }
 }

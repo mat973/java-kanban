@@ -16,9 +16,11 @@ import java.util.Map;
 public  class InMemoryTaskManager implements TaskManager {
     private int currentId;
 
-    private final Map<Integer, Task> tasks = new HashMap<>();
-    private final Map<Integer, Epic> epicTasks = new HashMap<>();
-    private final Map<Integer, Subtask> subTasks = new HashMap<>();
+    protected final Map<Integer, Task> tasks = new HashMap<>();
+    protected final Map<Integer, Epic> epicTasks = new HashMap<>();
+    protected final Map<Integer, Subtask> subTasks = new HashMap<>();
+
+
 
     private final HistoryManager historyManager;
 
@@ -227,5 +229,11 @@ public  class InMemoryTaskManager implements TaskManager {
         epicTasks.put(epic.getId(), epic);
     }
 
+    protected void setCurrentId(int currentId) {
+        this.currentId = currentId;
+    }
 
+    public int getCurrentId() {
+        return currentId;
+    }
 }

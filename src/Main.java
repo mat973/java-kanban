@@ -10,7 +10,7 @@ import task.Status;
 public class Main {
 
     public static void main(String[] args) {
-      FileBackedTaskManager.deleteFile();
+ //     FileBackedTaskManager.deleteFile();
       HistoryManager historyManager = Managers.getDefaultHistory();
       FileBackedTaskManager taskManager = Managers.getFileTaskManager(historyManager);
 //        TaskManager taskManager = Managers.getDefault(historyManager);
