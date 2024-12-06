@@ -32,19 +32,18 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             } catch (IOException e) {
                 throw new RuntimeException("Файл не создан");
             }
-        }
-        else {
+        } else {
             try (FileReader reader = new FileReader(FILE_NAME);
                  BufferedReader bufferedReader = new BufferedReader(reader)) {
-                    String firstLine = bufferedReader.readLine();
-                    String[] splitLine = firstLine.split(",");
-                    setCurrentId(Integer.parseInt(splitLine[0].substring(6)));
+                String firstLine = bufferedReader.readLine();
+                String[] splitLine = firstLine.split(",");
+                setCurrentId(Integer.parseInt(splitLine[0].substring(6)));
 
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
             try (FileReader fileReader = new FileReader(FILE_NAME);
-                 BufferedReader bufferedReader = new BufferedReader(fileReader)){
+                 BufferedReader bufferedReader = new BufferedReader(fileReader)) {
                 fillInMaps(bufferedReader);
             } catch (IOException e) {
                 throw new ManagerSaveException("Ошибка чтения при заполнения Map");
@@ -52,12 +51,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
     }
 
-    private void fillInMaps(BufferedReader reader) throws IOException{
+    private void fillInMaps(BufferedReader reader) throws IOException {
         reader.readLine(); // Skip firs line
-        while (reader.ready()){
+        while (reader.ready()) {
             String line = reader.readLine();
             String[] sLine = line.split(",");
-            switch (TaskType.getTaskType(sLine[1])){
+            switch (TaskType.getTaskType(sLine[1])) {
                 case TASK:
                     Task task = stringToTask(sLine);
                     tasks.put(task.getId(), task);
@@ -68,7 +67,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     break;
                 case SUBTASK:
                     Subtask subtask = stringToSubtask(sLine);
-                    subTasks.put(subtask.getEpicId(), subtask);
+                    subTasks.put(subtask.getId(), subtask);
                     break;
                 default:
                     throw new BadMemoryException("Целостность фала с данными нарушена");
@@ -90,7 +89,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     @Override
     public void createSubTusk(SubtaskDto subtaskDto) {
         try {
-        super.createSubTusk(subtaskDto);
+            super.createSubTusk(subtaskDto);
         } catch (EpicNotExistException e) {
             System.out.println("Epic с таким id не существует: " + subtaskDto.getEpicId());
             return;
@@ -134,7 +133,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public void removeAllSubTasks() {
-        super.removeAllSubTasks();        try {
+        super.removeAllSubTasks();
+        try {
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
@@ -206,7 +206,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     private void save() throws ManagerSaveException {
         try (FileWriter writer = new FileWriter(FILE_NAME);
              BufferedWriter bufferedWriter = new BufferedWriter(writer)) {
-            bufferedWriter.write("MaxId:" + (getCurrentId() - 1) + ",id,type,name,status,description,epic\n");;
+            bufferedWriter.write("MaxId:" + (getCurrentId() - 1) + ",id,type,name,status,description,epic\n");
+            ;
             writeTasks(getTasks(), bufferedWriter);
             writeEpic(getEpicTasks(), bufferedWriter);
             writeSubtask(getSubTasks(), bufferedWriter);
@@ -215,45 +216,49 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
     }
 
-    private  void  writeTasks(List<Task> taskList, BufferedWriter bufferedWriter) throws IOException {
+    private void writeTasks(List<Task> taskList, BufferedWriter bufferedWriter) throws IOException {
         for (Task task : taskList) {
             bufferedWriter.write(taskToString(task));
         }
     }
-    private  void  writeEpic(List<Epic> epicList, BufferedWriter bufferedWriter) throws IOException {
+
+    private void writeEpic(List<Epic> epicList, BufferedWriter bufferedWriter) throws IOException {
         for (Epic epic : epicList) {
             bufferedWriter.write(epicToString(epic));
         }
     }
-    private  void  writeSubtask(List<Subtask> subtaskList, BufferedWriter bufferedWriter) throws IOException {
+
+    private void writeSubtask(List<Subtask> subtaskList, BufferedWriter bufferedWriter) throws IOException {
         for (Subtask subtask : subtaskList) {
             bufferedWriter.write(subtaskToString(subtask));
         }
     }
 
-    private String taskToString(Task task){
+    private String taskToString(Task task) {
         return task.getId() + "," + TaskType.TASK + "," + task.getName() + "," + task.getStatus() +
                 "," + task.getDescription() + "\n";
     }
 
-    private String epicToString(Epic epic){
+    private String epicToString(Epic epic) {
         return epic.getId() + "," + TaskType.EPIC + "," + epic.getName() + "," + epic.getStatus() +
                 "," + epic.getDescription() + "\n";
     }
 
-    private String subtaskToString(Subtask subtask){
+    private String subtaskToString(Subtask subtask) {
         return subtask.getId() + "," + TaskType.SUBTASK + "," + subtask.getName() + "," + subtask.getStatus() +
-                "," + subtask.getDescription() + "," + subtask.getEpicId()+"\n";
+                "," + subtask.getDescription() + "," + subtask.getEpicId() + "\n";
     }
 
-    private Task stringToTask(String[] sLine){
-        return new Task(Integer.parseInt(sLine[0]), sLine[2],sLine[4], Status.getStatus(sLine[3]));
+    private Task stringToTask(String[] sLine) {
+        return new Task(Integer.parseInt(sLine[0]), sLine[2], sLine[4], Status.getStatus(sLine[3]));
     }
-    private Epic stringToEpic(String[] sLine){
-        return new Epic(Integer.parseInt(sLine[0]), sLine[2],sLine[4], Status.getStatus(sLine[3]));
+
+    private Epic stringToEpic(String[] sLine) {
+        return new Epic(Integer.parseInt(sLine[0]), sLine[2], sLine[4], Status.getStatus(sLine[3]));
     }
-    private Subtask stringToSubtask(String[] sLine){
-        return new Subtask(Integer.parseInt(sLine[0]), sLine[2],sLine[4], Status.getStatus(sLine[3]),
+
+    private Subtask stringToSubtask(String[] sLine) {
+        return new Subtask(Integer.parseInt(sLine[0]), sLine[2], sLine[4], Status.getStatus(sLine[3]),
                 Integer.parseInt(sLine[5]));
     }
 

@@ -4,6 +4,7 @@ public enum TaskType {
     TASK,
     EPIC,
     SUBTASK;
+
     public static TaskType getTaskType(String type) {
         for (TaskType taskType : values()) {
             if (taskType.name().equals(type)) {

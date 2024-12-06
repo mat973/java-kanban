@@ -13,14 +13,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public  class InMemoryTaskManager implements TaskManager {
+public class InMemoryTaskManager implements TaskManager {
     private int currentId;
 
     protected final Map<Integer, Task> tasks = new HashMap<>();
     protected final Map<Integer, Epic> epicTasks = new HashMap<>();
     protected final Map<Integer, Subtask> subTasks = new HashMap<>();
-
-
 
     private final HistoryManager historyManager;
 

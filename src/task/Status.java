@@ -4,6 +4,7 @@ public enum Status {
     NEW,
     IN_PROGRESS,
     DONE;
+
     public static Status getStatus(String stat) {
         if (stat == null) {
             throw new IllegalArgumentException("Строка не может быть null");

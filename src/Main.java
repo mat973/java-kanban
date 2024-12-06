@@ -10,9 +10,9 @@ import task.Status;
 public class Main {
 
     public static void main(String[] args) {
- //     FileBackedTaskManager.deleteFile();
-      HistoryManager historyManager = Managers.getDefaultHistory();
-      FileBackedTaskManager taskManager = Managers.getFileTaskManager(historyManager);
+        //     FileBackedTaskManager.deleteFile();
+        HistoryManager historyManager = Managers.getDefaultHistory();
+        FileBackedTaskManager taskManager = Managers.getFileTaskManager(historyManager);
 //        TaskManager taskManager = Managers.getDefault(historyManager);
 //
 //        System.out.println("Поехали!");
@@ -33,7 +33,7 @@ public class Main {
         taskManager.createSubTusk(subtaskDto3);
         taskManager.createSubTusk(subtaskDto4);
 
-      System.out.println(taskManager.getTaskById(0));
+        System.out.println(taskManager.getTaskById(0));
 //
 //        System.out.println(historyManager.getHistory());
 //        taskManager.getTaskById(0);
