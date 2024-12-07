@@ -3,6 +3,7 @@ package managers;
 import dto.EpicDto;
 import dto.SubtaskDto;
 import dto.TaskDto;
+import exeptions.EpicNotExistException;
 import task.Epic;
 import task.Status;
 import task.Subtask;
@@ -12,12 +13,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class InMemoryTaskManager implements TaskManager {
+public class InMemoryTaskManager implements TaskManager {
     private int currentId;
 
-    private final Map<Integer, Task> tasks = new HashMap<>();
-    private final Map<Integer, Epic> epicTasks = new HashMap<>();
-    private final Map<Integer, Subtask> subTasks = new HashMap<>();
+    protected final Map<Integer, Task> tasks = new HashMap<>();
+    protected final Map<Integer, Epic> epicTasks = new HashMap<>();
+    protected final Map<Integer, Subtask> subTasks = new HashMap<>();
 
     private final HistoryManager historyManager;
 
@@ -51,10 +52,10 @@ public final class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void createSubTusk(SubtaskDto subtaskDto) {
+    public void createSubTusk(SubtaskDto subtaskDto) throws EpicNotExistException {
         if (!epicTasks.containsKey(subtaskDto.getEpicId())) {
             System.out.println("Подзадача не может сущесвовать самастоятельно");
-            return;
+            throw new EpicNotExistException("Epic not found");
         }
         Epic epic = epicTasks.get(subtaskDto.getEpicId());
         Subtask subtask = new Subtask(generateId(), subtaskDto.getName(), subtaskDto.getDescription(), Status.NEW,
@@ -134,7 +135,7 @@ public final class InMemoryTaskManager implements TaskManager {
         }
 
         tasks.put(taskDto.getId(), new Task(taskDto.getId(), taskDto.getName(), taskDto.getDescription(),
-                taskDto.getCondition()));
+                taskDto.getStatus()));
         System.out.println("Задача была изменена");
     }
 
@@ -145,7 +146,7 @@ public final class InMemoryTaskManager implements TaskManager {
             return;
         }
         Subtask subtask = new Subtask(subtaskDto.getId(), subtaskDto.getName(),
-                subtaskDto.getDescription(), subtaskDto.getCondition(), subtaskDto.getEpicId());
+                subtaskDto.getDescription(), subtaskDto.getStatus(), subtaskDto.getEpicId());
         subTasks.put(subtaskDto.getId(), subtask);
         Epic epic = epicTasks.get(subtask.getEpicId());
         ArrayList<Subtask> list = epic.getSubtasks();
@@ -226,5 +227,11 @@ public final class InMemoryTaskManager implements TaskManager {
         epicTasks.put(epic.getId(), epic);
     }
 
+    protected void setCurrentId(int currentId) {
+        this.currentId = currentId;
+    }
 
+    public int getCurrentId() {
+        return currentId;
+    }
 }
