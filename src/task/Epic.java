@@ -11,8 +11,8 @@ public class Epic extends Task {
         this.subtasks = epic.subtasks;
     }
 
-    public Epic(int id, String name, String description, Status status) {
-        super(id, name, description, status);
+    public Epic(int id, String name, String description, Status status, long minutes, String startTime) {
+        super(id, description, status, name, minutes, startTime);
         this.subtasks = new ArrayList<>();
     }
 
@@ -32,6 +32,8 @@ public class Epic extends Task {
                 result += ", ";
 
         }
+
+        result += ", продолжительность: " + duration.toHours() +  ":" + duration.toMinutesPart();
 
 
         return result + "]";

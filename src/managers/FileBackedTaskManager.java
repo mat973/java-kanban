@@ -250,16 +250,18 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     private Task stringToTask(String[] sLine) {
-        return new Task(Integer.parseInt(sLine[0]), sLine[2], sLine[4], Status.getStatus(sLine[3]));
+        return new Task(Integer.parseInt(sLine[0]), sLine[2], Status.getStatus(sLine[3]), sLine[4],
+                Long.parseLong(sLine[5]), sLine[6]);
     }
 
     private Epic stringToEpic(String[] sLine) {
-        return new Epic(Integer.parseInt(sLine[0]), sLine[2], sLine[4], Status.getStatus(sLine[3]));
+        return new Epic(Integer.parseInt(sLine[0]), sLine[2], sLine[4], Status.getStatus(sLine[3]),
+                Long.parseLong(sLine[5]), sLine[6]);
     }
 
     private Subtask stringToSubtask(String[] sLine) {
         return new Subtask(Integer.parseInt(sLine[0]), sLine[2], sLine[4], Status.getStatus(sLine[3]),
-                Integer.parseInt(sLine[5]));
+                Integer.parseInt(sLine[5]), Long.parseLong(sLine[6]), sLine[7]);
     }
 
     public static void deleteFile() {
