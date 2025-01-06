@@ -17,7 +17,7 @@ public class Main {
         TaskManager taskManager = Managers.getDefault(historyManager);
 //
 //        System.out.println("Поехали!");
-        TaskDto taskDto = new TaskDto(0, "task", "Desc", Status.NEW, 90,
+        TaskDto taskDto = new TaskDto(0, "task", "Desc", Status.NEW, 90L,
                 "12 12 2024 17:30" );
 //        EpicDto epicDto1 = new EpicDto(1, "Epic1", "Desck1", Status.NEW);
 //        EpicDto epicDto2 = new EpicDto(2, "Epic2", "Desck3", Status.NEW);

@@ -4,28 +4,34 @@ import task.Status;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 public class TaskDto {
     private int id;
     private String description;
     private Status status;
     private String name;
-    private long duration;
-    private String startTime;
+    private Optional<Long> duration;
+    private Optional<String> startTime;
 
 
 
 
-    public TaskDto(int id, String name, String description, Status status,long minutes, String startTime) {
+    public TaskDto(int id, String name, String description, Status status,Long minutes, String startTime) {
         this.id = id;
         this.description = description;
         this.status = status;
         this.name = name;
-        this.duration = minutes;
-        this.startTime = startTime;
+        this.duration = Optional.ofNullable(minutes);
+        this.startTime = Optional.ofNullable(startTime);
     }
 
-
+    public TaskDto(int id, String description, String name, Status status) {
+        this.id = id;
+        this.description = description;
+        this.status = status;
+        this.name = name;
+    }
 
     public Integer getId() {
         return id;
@@ -59,11 +65,11 @@ public class TaskDto {
         this.name = name;
     }
 
-    public long getDuration() {
+    public Optional<Long> getDuration() {
         return duration;
     }
 
-    public String getStartTime() {
+    public Optional<String> getStartTime() {
         return startTime;
     }
 }

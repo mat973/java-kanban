@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 public class Task implements Comparable<Task> {
     protected DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd MM yyyy HH:mm");
@@ -13,28 +14,34 @@ public class Task implements Comparable<Task> {
     protected String description;
     protected Status status;
     protected String name;
-    protected Duration duration;
-    protected LocalDateTime startTime;
+    protected Optional<Duration> duration;
+    protected Optional<LocalDateTime> startTime;
 
 
-    public Task(int id, String description, Status status, String name, long minutes, String startTime) {
+
+
+
+        public Task(int id, String description, Status status, String name, Long minutes, String startTime) {
         this.id = id;
         this.description = description;
         this.status = status;
         this.name = name;
-        this.duration = Duration.ofMinutes(minutes);
-        this.startTime = LocalDateTime.parse(startTime, inputFormatter);
+        this.duration = Optional.of(Duration.ofMinutes(minutes));
+        this.startTime = Optional.of(LocalDateTime.parse(startTime, inputFormatter));
     }
 
-    protected Task(Task task) {
-        this.id = task.id;
-        this.description = task.description;
-        this.status = task.status;
-        this.name = task.name;
-        this.startTime = task.startTime;
-        this.duration = task.duration;
+    public Task(int id, String name, String description, Status status) {
+        this.id = id;
+        this.description = description;
+        this.status = status;
+        this.name = name;
+        this.duration = Optional.empty();
+        this.startTime = Optional.empty();
     }
 
+    public LocalDateTime getEndTime(){
+            return this.startTime.get().plus(this.duration.get());
+    }
 
     public int getId() {
         return id;
@@ -52,19 +59,19 @@ public class Task implements Comparable<Task> {
         return name;
     }
 
-    public Duration getDuration() {
+    public Optional<Duration> getDuration() {
         return duration;
     }
 
-    public void setDuration(Duration duration) {
+    public void setDuration(Optional<Duration> duration) {
         this.duration = duration;
     }
 
-    public LocalDateTime getStartTime() {
+    public Optional<LocalDateTime> getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(LocalDateTime startTime) {
+    public void setStartTime(Optional<LocalDateTime> startTime) {
         this.startTime = startTime;
     }
 
@@ -83,9 +90,11 @@ public class Task implements Comparable<Task> {
     @Override
     public String toString() {
         return "ID:" + getId() + " [Название:" + getName() + ", описание:" + getDescription() + ", состояние:"
-                + getStatus().name() + ", время начала: " + startTime.format(outputFormater) + ", продолжительность: "
-                + (duration.toHours() >= 1? (duration.toHours() + " часов ") : "")+
-                (duration.toMinutesPart() >= 1? (duration.toHours() + " минут" ) : "")+ "]";
+                + getStatus().name() +
+                (startTime.isPresent() && duration.isPresent() ?", время начала: "
+                        + startTime.get().format(outputFormater) + ", продолжительность: "
+                + (duration.get().toHours() >= 1? (duration.get().toHours() + " часов ") : "")+
+                (duration.get().toMinutesPart() >= 1? (duration.get().toHours() + " минут" ) : "")+ "]" : "]");
     }
 
 
@@ -105,9 +114,9 @@ public class Task implements Comparable<Task> {
 
     @Override
     public int compareTo(Task o) {
-        if (this.startTime.isAfter(o.startTime)){
+        if (this.startTime.get().isAfter(o.startTime.get())){
             return 1;
-        } else if (this.startTime.isBefore(o.startTime)) {
+        } else if (this.startTime.get().isBefore(o.startTime.get())) {
             return -1;
         }else {
             return 0;
