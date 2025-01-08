@@ -7,8 +7,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 public class Task implements Comparable<Task> {
-    protected DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd MM yyyy HH:mm");
-    protected DateTimeFormatter outputFormater = DateTimeFormatter.ofPattern(
+    public static DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd MM yyyy HH:mm");
+    public static DateTimeFormatter outputFormater = DateTimeFormatter.ofPattern(
             "Вермя начала запланированно на HH часов mm минут dd-го MMMM yyyy года");
     protected int id;
     protected String description;
@@ -21,7 +21,7 @@ public class Task implements Comparable<Task> {
 
 
 
-        public Task(int id, String description, Status status, String name, Long minutes, String startTime) {
+        public Task(int id, String name, String description, Status status,  Long minutes, String startTime) {
         this.id = id;
         this.description = description;
         this.status = status;
@@ -94,7 +94,7 @@ public class Task implements Comparable<Task> {
                 (startTime.isPresent() && duration.isPresent() ?", время начала: "
                         + startTime.get().format(outputFormater) + ", продолжительность: "
                 + (duration.get().toHours() >= 1? (duration.get().toHours() + " часов ") : "")+
-                (duration.get().toMinutesPart() >= 1? (duration.get().toHours() + " минут" ) : "")+ "]" : "]");
+                (duration.get().toMinutesPart() >= 1? (duration.get().toMinutesPart() + " минут" ) : "")+ "]" : "]");
     }
 
 

@@ -31,6 +31,8 @@ public class TaskDto {
         this.description = description;
         this.status = status;
         this.name = name;
+        this.duration = Optional.empty();
+        this.startTime = Optional.empty();
     }
 
     public Integer getId() {

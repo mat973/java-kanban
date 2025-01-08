@@ -3,6 +3,7 @@ package managers;
 import dto.EpicDto;
 import dto.SubtaskDto;
 import dto.TaskDto;
+import exeptions.TaskIntersectionExeption;
 import task.Epic;
 import task.Subtask;
 import task.Task;
@@ -16,7 +17,7 @@ public interface TaskManager {
 
     List<Subtask> getSubTasks();
 
-    void createTask(TaskDto taskDto);
+    void createTask(TaskDto taskDto) throws TaskIntersectionExeption;
 
     void createSubTusk(SubtaskDto subtaskDto);
 

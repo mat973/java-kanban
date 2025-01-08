@@ -7,12 +7,17 @@ import java.util.Optional;
 
 public class Epic extends Task {
     private ArrayList<Subtask> subtasks;
-    private LocalDateTime endTime;
+
 
 
 
     public Epic(int id, String name, String description, Status status) {
         super(id, name, description, status);
+        this.subtasks = new ArrayList<>();
+    }
+
+    public Epic(int id, String name, String description, Status status, Long minutes, String startTime) {
+        super(id, name, description, status, minutes, startTime);
         this.subtasks = new ArrayList<>();
     }
 
@@ -47,7 +52,5 @@ public class Epic extends Task {
         return super.getEndTime();
     }
 
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
-    }
+
 }

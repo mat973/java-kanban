@@ -6,6 +6,7 @@ import dto.TaskDto;
 import exeptions.BadMemoryException;
 import exeptions.EpicNotExistException;
 import exeptions.ManagerSaveException;
+import exeptions.TaskIntersectionExeption;
 import task.*;
 
 import java.io.*;
@@ -78,7 +79,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public void createTask(TaskDto taskDto) {
-        super.createTask(taskDto);
+        try {
+            super.createTask(taskDto);
+        } catch (TaskIntersectionExeption e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
         try {
             save();
         } catch (ManagerSaveException e) {
@@ -93,6 +99,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         } catch (EpicNotExistException e) {
             System.out.println("Epic с таким id не существует: " + subtaskDto.getEpicId());
             return;
+        } catch (TaskIntersectionExeption e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
         }
         try {
             save();
@@ -144,7 +153,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public void changeTask(TaskDto taskDto) {
-        super.changeTask(taskDto);
+        try {
+            super.changeTask(taskDto);
+        } catch (TaskIntersectionExeption e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
         try {
             save();
         } catch (ManagerSaveException e) {
@@ -154,7 +168,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public void changeSubTask(SubtaskDto subtaskDto) {
-        super.changeSubTask(subtaskDto);
+        try {
+            super.changeSubTask(subtaskDto);
+        } catch (TaskIntersectionExeption e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
         try {
             save();
         } catch (ManagerSaveException e) {
@@ -235,33 +254,65 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     private String taskToString(Task task) {
-        return task.getId() + "," + TaskType.TASK + "," + task.getName() + "," + task.getStatus() +
-                "," + task.getDescription() + "\n";
+        StringBuilder stringBuilder = new StringBuilder(task.getId() + "," + TaskType.TASK + "," + task.getName() + ","
+                + task.getDescription() + "," +  task.getStatus());
+        if (task.getStartTime().isPresent() && task.getDuration().isPresent()){
+            stringBuilder.append(task.getDuration()).append(",")
+                    .append(task.getStartTime().get().format(Task.inputFormatter));
+        }
+        stringBuilder.append("\n");
+        return stringBuilder.toString();
     }
 
     private String epicToString(Epic epic) {
-        return epic.getId() + "," + TaskType.EPIC + "," + epic.getName() + "," + epic.getStatus() +
-                "," + epic.getDescription() + "\n";
+        StringBuilder stringBuilder = new StringBuilder(epic.getId() + "," + TaskType.EPIC + "," + epic.getName() + ","
+                + epic.getDescription() + "," + epic.getStatus());
+        if (epic.getStartTime().isPresent() && epic.getDuration().isPresent()){
+            stringBuilder.append(epic.getDuration()).append(",")
+                    .append(epic.getStartTime().get().format(Task.inputFormatter));
+        }
+        stringBuilder.append("\n");
+        return stringBuilder.toString();
     }
 
     private String subtaskToString(Subtask subtask) {
-        return subtask.getId() + "," + TaskType.SUBTASK + "," + subtask.getName() + "," + subtask.getStatus() +
-                "," + subtask.getDescription() + "," + subtask.getEpicId() + "\n";
+        StringBuilder stringBuilder = new StringBuilder(subtask.getId() + "," + TaskType.SUBTASK + ","
+                + subtask.getName() + "," + subtask.getDescription() + "," + subtask.getStatus()
+                + "," + subtask.getEpicId());
+        if (subtask.getStartTime().isPresent() && subtask.getDuration().isPresent()){
+            stringBuilder.append(subtask.getDuration()).append(",")
+                    .append(subtask.getStartTime().get().format(Task.inputFormatter));
+        }
+        stringBuilder.append("\n");
+        return stringBuilder.toString();
     }
 
     private Task stringToTask(String[] sLine) {
-        return new Task(Integer.parseInt(sLine[0]), sLine[2], Status.getStatus(sLine[3]), sLine[4],
-                Long.parseLong(sLine[5]), sLine[6]);
+        if (sLine.length == 5) {
+            return new Task(Integer.parseInt(sLine[0]), sLine[2], sLine[3], Status.getStatus(sLine[4]));
+        }else {
+            return new Task(Integer.parseInt(sLine[0]), sLine[2], sLine[3], Status.getStatus(sLine[4]),
+                    Long.parseLong(sLine[5]), sLine[6]);
+        }
     }
 
     private Epic stringToEpic(String[] sLine) {
-        return new Epic(Integer.parseInt(sLine[0]), sLine[2], sLine[4], Status.getStatus(sLine[3]),
+        if (sLine.length == 5) {
+            return new Epic(Integer.parseInt(sLine[0]), sLine[2], sLine[3], Status.getStatus(sLine[4]));
+        }else {
+        return new Epic(Integer.parseInt(sLine[0]), sLine[2], sLine[3], Status.getStatus(sLine[4]),
                 Long.parseLong(sLine[5]), sLine[6]);
+        }
     }
 
     private Subtask stringToSubtask(String[] sLine) {
-        return new Subtask(Integer.parseInt(sLine[0]), sLine[2], sLine[4], Status.getStatus(sLine[3]),
-                Integer.parseInt(sLine[5]), Long.parseLong(sLine[6]), sLine[7]);
+        if (sLine.length == 6) {
+            return new Subtask(Integer.parseInt(sLine[0]), sLine[2], sLine[3], Status.getStatus(sLine[4]),
+                    Integer.parseInt(sLine[5]));
+        }else {
+            return new Subtask(Integer.parseInt(sLine[0]), sLine[2], sLine[3], Status.getStatus(sLine[4]),
+                    Integer.parseInt(sLine[5]), Long.parseLong(sLine[6]), sLine[7]);
+        }
     }
 
     public static void deleteFile() {
