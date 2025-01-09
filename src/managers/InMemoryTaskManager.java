@@ -51,8 +51,8 @@ public class InMemoryTaskManager implements TaskManager {
     public boolean createTask(TaskDto taskDto) throws TaskIntersectionExeption {
         Task task;
         if (taskDto.getStartTime().isPresent() && taskDto.getDuration().isPresent()) {
-            task = new Task(generateId(), taskDto.getName(), taskDto.getDescription(), Status.NEW
-                    , taskDto.getDuration().get(), taskDto.getStartTime().get());
+            task = new Task(generateId(), taskDto.getName(), taskDto.getDescription(), Status.NEW,
+                    taskDto.getDuration().get(), taskDto.getStartTime().get());
             try {
                 checkIntersectionTask(task);
             } catch (TaskIntersectionExeption e) {
@@ -98,8 +98,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public boolean createEpic(EpicDto epicDto) {
-        Epic epic = new Epic(generateId(), epicDto.getName(), epicDto.getDescription()
-                , epicDto.getStatus());
+        Epic epic = new Epic(generateId(), epicDto.getName(), epicDto.getDescription(),
+                epicDto.getStatus());
 
         epicTasks.put(epic.getId(), epic);
         return true;
@@ -173,8 +173,8 @@ public class InMemoryTaskManager implements TaskManager {
         sortedTasks.remove(oldTask);
         Task task;
         if (taskDto.getDuration().isPresent() && taskDto.getStartTime().isPresent()) {
-            task = new Task(taskDto.getId(), taskDto.getName(), taskDto.getDescription(), taskDto.getStatus()
-                    , taskDto.getDuration().get(), taskDto.getStartTime().get());
+            task = new Task(taskDto.getId(), taskDto.getName(), taskDto.getDescription(), taskDto.getStatus(),
+                    taskDto.getDuration().get(), taskDto.getStartTime().get());
             try {
                 checkIntersectionTask(task);
             } catch (TaskIntersectionExeption e) {
@@ -201,8 +201,8 @@ public class InMemoryTaskManager implements TaskManager {
         Subtask subtask;
         if (subtaskDto.getStartTime().isPresent() && subtaskDto.getDuration().isPresent()) {
             subtask = new Subtask(subtaskDto.getId(), subtaskDto.getName(),
-                    subtaskDto.getDescription(), subtaskDto.getStatus(), subtaskDto.getEpicId()
-                    , subtaskDto.getDuration().get(), subtaskDto.getStartTime().get());
+                    subtaskDto.getDescription(), subtaskDto.getStatus(), subtaskDto.getEpicId(),
+                    subtaskDto.getDuration().get(), subtaskDto.getStartTime().get());
             try {
                 checkIntersectionTask(subtask);
             } catch (TaskIntersectionExeption e) {
