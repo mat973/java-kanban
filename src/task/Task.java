@@ -91,7 +91,8 @@ public class Task implements Comparable<Task> {
                 (startTime.isPresent() && duration.isPresent() ? ", время начала: "
                         + startTime.get().format(outputFormater) + ", продолжительность: "
                         + (duration.get().toHours() >= 1 ? (duration.get().toHours() + " часов ") : "") +
-                        (duration.get().toMinutesPart() >= 1 ? (duration.get().toMinutesPart() + " минут") : "") + "]" : "]");
+                        (duration.get().toMinutesPart() >= 1 ? (duration.get().toMinutesPart() + " минут") : "") + "]" :
+                        "]");
     }
 
 
