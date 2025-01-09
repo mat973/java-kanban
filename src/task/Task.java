@@ -2,8 +2,8 @@ package task;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Objects;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 import java.util.Optional;
 
 public class Task implements Comparable<Task> {
@@ -18,10 +18,7 @@ public class Task implements Comparable<Task> {
     protected Optional<LocalDateTime> startTime;
 
 
-
-
-
-        public Task(int id, String name, String description, Status status,  Long minutes, String startTime) {
+    public Task(int id, String name, String description, Status status, Long minutes, String startTime) {
         this.id = id;
         this.description = description;
         this.status = status;
@@ -39,8 +36,8 @@ public class Task implements Comparable<Task> {
         this.startTime = Optional.empty();
     }
 
-    public LocalDateTime getEndTime(){
-            return this.startTime.get().plus(this.duration.get());
+    public LocalDateTime getEndTime() {
+        return this.startTime.get().plus(this.duration.get());
     }
 
     public int getId() {
@@ -91,10 +88,10 @@ public class Task implements Comparable<Task> {
     public String toString() {
         return "ID:" + getId() + " [Название:" + getName() + ", описание:" + getDescription() + ", состояние:"
                 + getStatus().name() +
-                (startTime.isPresent() && duration.isPresent() ?", время начала: "
+                (startTime.isPresent() && duration.isPresent() ? ", время начала: "
                         + startTime.get().format(outputFormater) + ", продолжительность: "
-                + (duration.get().toHours() >= 1? (duration.get().toHours() + " часов ") : "")+
-                (duration.get().toMinutesPart() >= 1? (duration.get().toMinutesPart() + " минут" ) : "")+ "]" : "]");
+                        + (duration.get().toHours() >= 1 ? (duration.get().toHours() + " часов ") : "") +
+                        (duration.get().toMinutesPart() >= 1 ? (duration.get().toMinutesPart() + " минут") : "") + "]" : "]");
     }
 
 
@@ -114,12 +111,16 @@ public class Task implements Comparable<Task> {
 
     @Override
     public int compareTo(Task o) {
-        if (this.startTime.get().isAfter(o.startTime.get())){
+        if (this.getStartTime().get().isAfter(o.getStartTime().get())) {
             return 1;
         } else if (this.startTime.get().isBefore(o.startTime.get())) {
             return -1;
-        }else {
-            return 0;
+        } else {
+            if (this.getId() == o.getId()) {
+                return 0;
+            } else {
+                return Integer.compare(this.getId(), o.getId());
+            }
         }
 
     }

@@ -2,13 +2,10 @@ package task;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Optional;
 
 
 public class Epic extends Task {
     private ArrayList<Subtask> subtasks;
-
-
 
 
     public Epic(int id, String name, String description, Status status) {
@@ -38,10 +35,10 @@ public class Epic extends Task {
 
         }
 
-        result +=   (startTime.isPresent() && duration.isPresent() ?", время начала: "
+        result += (startTime.isPresent() && duration.isPresent() ? ", время начала: "
                 + startTime.get().format(outputFormater) + ", продолжительность: "
-                + (duration.get().toHours() >= 1? (duration.get().toHours() + " часов ") : "")+
-                (duration.get().toMinutesPart() >= 1? (duration.get().toHours() + " минут" ) : "")+ "]" : "]");
+                + (duration.get().toHours() >= 1 ? (duration.get().toHours() + " часов ") : "") +
+                (duration.get().toMinutesPart() >= 1 ? (duration.get().toMinutesPart() + " минут") : "") + "]" : "]");
 
 
         return result;

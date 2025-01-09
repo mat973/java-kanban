@@ -20,7 +20,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected final Map<Integer, Task> tasks = new HashMap<>();
     protected final Map<Integer, Epic> epicTasks = new HashMap<>();
     protected final Map<Integer, Subtask> subTasks = new HashMap<>();
-    protected final  Set<Task> sortedTasks = new TreeSet<>();
+    protected final Set<Task> sortedTasks = new TreeSet<>();
 
     private final HistoryManager historyManager;
 
@@ -48,29 +48,30 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void createTask(TaskDto taskDto) throws TaskIntersectionExeption {
-    Task task;
+    public boolean createTask(TaskDto taskDto) throws TaskIntersectionExeption {
+        Task task;
         if (taskDto.getStartTime().isPresent() && taskDto.getDuration().isPresent()) {
-            task = new Task(generateId(), taskDto.getName(),taskDto.getDescription(), Status.NEW
+            task = new Task(generateId(), taskDto.getName(), taskDto.getDescription(), Status.NEW
                     , taskDto.getDuration().get(), taskDto.getStartTime().get());
             try {
                 checkIntersectionTask(task);
             } catch (TaskIntersectionExeption e) {
                 System.out.println(e.getMessage());
-                throw e;
+                return false;
             }
             sortedTasks.add(task);
-        }else {
+        } else {
             task = new Task(generateId(), taskDto.getName(), taskDto.getDescription(), Status.NEW);
         }
         tasks.put(task.getId(), task);
+        return true;
     }
 
     @Override
-    public void createSubTusk(SubtaskDto subtaskDto) throws EpicNotExistException, TaskIntersectionExeption {
+    public boolean createSubTusk(SubtaskDto subtaskDto) throws EpicNotExistException, TaskIntersectionExeption {
         if (!epicTasks.containsKey(subtaskDto.getEpicId())) {
             System.out.println("Подзадача не может сущесвовать самастоятельно");
-            throw new EpicNotExistException("Epic not found");
+            return false;
         }
         Epic epic = epicTasks.get(subtaskDto.getEpicId());
         Subtask subtask;
@@ -81,10 +82,10 @@ public class InMemoryTaskManager implements TaskManager {
                 checkIntersectionTask(subtask);
             } catch (TaskIntersectionExeption e) {
                 System.out.println(e.getMessage());
-                throw e;
+                return false;
             }
             sortedTasks.add(subtask);
-        }else {
+        } else {
             subtask = new Subtask(generateId(), subtaskDto.getName(), subtaskDto.getDescription(), Status.NEW,
                     epic.getId());
         }
@@ -92,34 +93,39 @@ public class InMemoryTaskManager implements TaskManager {
         epic.getSubtasks().add(subtask);
         checkCondition(epic);
         epicTasks.put(epic.getId(), epic);
+        return true;
     }
 
     @Override
-    public void createEpic(EpicDto epicDto) {
-        Epic epic = new Epic(generateId(), epicDto.getName(),epicDto.getDescription()
-                ,epicDto.getStatus());
+    public boolean createEpic(EpicDto epicDto) {
+        Epic epic = new Epic(generateId(), epicDto.getName(), epicDto.getDescription()
+                , epicDto.getStatus());
 
         epicTasks.put(epic.getId(), epic);
+        return true;
     }
 
     @Override
-    public void removeAllTasks() {
+    public boolean removeAllTasks() {
         tasks.clear();
+        return true;
     }
 
     @Override
-    public void removeAllEpics() {
+    public boolean removeAllEpics() {
         subTasks.clear();
         epicTasks.clear();
+        return true;
     }
 
     @Override
-    public void removeAllSubTasks() {
+    public boolean removeAllSubTasks() {
         subTasks.clear();
         for (Integer i : epicTasks.keySet()) {
             epicTasks.get(i).getSubtasks().clear();
             checkCondition(epicTasks.get(i));
         }
+        return true;
     }
 
     @Override
@@ -157,53 +163,54 @@ public class InMemoryTaskManager implements TaskManager {
 
 
     @Override
-    public void changeTask(TaskDto taskDto) throws TaskIntersectionExeption {
+    public boolean changeTask(TaskDto taskDto) throws TaskIntersectionExeption {
 
         if (!tasks.containsKey(taskDto.getId())) {
             System.out.println("Такой задачи не существует");
-            return;
+            return false;
         }
         Task oldTask = tasks.get(taskDto.getId());
         sortedTasks.remove(oldTask);
         Task task;
-        if (taskDto.getDuration().isPresent() && taskDto.getStartTime().isPresent()){
+        if (taskDto.getDuration().isPresent() && taskDto.getStartTime().isPresent()) {
             task = new Task(taskDto.getId(), taskDto.getName(), taskDto.getDescription(), taskDto.getStatus()
                     , taskDto.getDuration().get(), taskDto.getStartTime().get());
             try {
                 checkIntersectionTask(task);
             } catch (TaskIntersectionExeption e) {
                 System.out.println(e.getMessage());
-                throw e;
+                return false;
             }
             sortedTasks.add(task);
-        }else {
-            task = new Task(taskDto.getId(), taskDto.getName(),  taskDto.getDescription(), taskDto.getStatus());
+        } else {
+            task = new Task(taskDto.getId(), taskDto.getName(), taskDto.getDescription(), taskDto.getStatus());
         }
         tasks.put(taskDto.getId(), task);
         System.out.println("Задача была изменена");
+        return true;
     }
 
     @Override
-    public void changeSubTask(SubtaskDto subtaskDto) throws TaskIntersectionExeption {
+    public boolean changeSubTask(SubtaskDto subtaskDto) throws TaskIntersectionExeption {
         if (!subTasks.containsKey(subtaskDto.getId())) {
             System.out.println("Такой подзадачи не существует");
-            return;
+            return false;
         }
         Subtask oldSubtask = subTasks.get(subtaskDto.getId());
         sortedTasks.remove(oldSubtask);
         Subtask subtask;
-        if (subtaskDto.getStartTime().isPresent() && subtaskDto.getDuration().isPresent()){
-             subtask = new Subtask(subtaskDto.getId(), subtaskDto.getName(),
+        if (subtaskDto.getStartTime().isPresent() && subtaskDto.getDuration().isPresent()) {
+            subtask = new Subtask(subtaskDto.getId(), subtaskDto.getName(),
                     subtaskDto.getDescription(), subtaskDto.getStatus(), subtaskDto.getEpicId()
                     , subtaskDto.getDuration().get(), subtaskDto.getStartTime().get());
             try {
                 checkIntersectionTask(subtask);
             } catch (TaskIntersectionExeption e) {
                 System.out.println(e.getMessage());
-                throw e;
+                return false;
             }
             sortedTasks.add(subtask);
-        }else {
+        } else {
             subtask = new Subtask(subtaskDto.getId(), subtaskDto.getName(),
                     subtaskDto.getDescription(), subtaskDto.getStatus(), subtaskDto.getEpicId());
         }
@@ -217,14 +224,14 @@ public class InMemoryTaskManager implements TaskManager {
         }
         epicTasks.put(epic.getId(), epic);
         checkCondition(epic);
-        System.out.println("Подзадача была изменена");
+        return true;
     }
 
     @Override
-    public void changeEpic(EpicDto epicDto) {
+    public boolean changeEpic(EpicDto epicDto) {
         if (!epicTasks.containsKey(epicDto.getId())) {
             System.out.println("Такого Эпика не существует");
-            return;
+            return false;
         }
         Epic epic = epicTasks.get(epicDto.getId());
         sortedTasks.remove(epic);
@@ -232,25 +239,27 @@ public class InMemoryTaskManager implements TaskManager {
         epic.setDescription(epicDto.getDescription());
         sortedTasks.add(epic);
         epicTasks.put(epic.getId(), epic);
+        return true;
 
     }
 
     @Override
-    public void removeTaskById(int id) {
+    public boolean removeTaskById(int id) {
         if (!tasks.containsKey(id)) {
             System.out.println("Такой задачи не существует");
-            return;
+            return false;
         }
         sortedTasks.remove(getTaskById(id));
         historyManager.remove(id);
         tasks.remove(id);
+        return true;
     }
 
     @Override
-    public void removeEpicById(int id) {
+    public boolean removeEpicById(int id) {
         if (!epicTasks.containsKey(id)) {
             System.out.println("Такого эпика не существует");
-            return;
+            return false;
         }
         Epic epic = epicTasks.get(id);
         epic.getSubtasks().forEach(x -> {
@@ -261,13 +270,14 @@ public class InMemoryTaskManager implements TaskManager {
         sortedTasks.remove(epic);
         historyManager.remove(id);
         epicTasks.remove(id);
+        return true;
     }
 
     @Override
-    public void removeSubtaskById(int id) {
+    public boolean removeSubtaskById(int id) {
         if (!subTasks.containsKey(id)) {
             System.out.println("Такой подзадачи не существует");
-            return;
+            return false;
         }
         Subtask subtask = subTasks.get(id);
         Epic epic = epicTasks.get(subtask.getEpicId());
@@ -277,11 +287,14 @@ public class InMemoryTaskManager implements TaskManager {
         subTasks.remove(subtask.getId());
         checkCondition(epic);
         epicTasks.put(epic.getId(), epic);
+        return true;
     }
 
 
     private void checkCondition(Epic epic) {
-        sortedTasks.remove(epic);
+        if (epic.getStartTime().isPresent() && epic.getDuration().isPresent()) {
+            sortedTasks.remove(epic);
+        }
         if ((epic.getSubtasks().isEmpty()
                 || epic.getSubtasks().stream().allMatch(x -> x.getStatus() == Status.NEW))) {
             epic.setCondition(Status.NEW);
@@ -294,7 +307,7 @@ public class InMemoryTaskManager implements TaskManager {
         List<Subtask> validSubTask = epic.getSubtasks().stream()
                 .filter(obj -> obj.getStartTime().isPresent() && obj.getDuration().isPresent())
                 .toList();
-        if (validSubTask.isEmpty()){
+        if (validSubTask.isEmpty()) {
             epic.setStartTime(Optional.empty());
             epic.setDuration(Optional.empty());
             return;
@@ -319,7 +332,7 @@ public class InMemoryTaskManager implements TaskManager {
         return currentId;
     }
 
-    public Set<Task> getPrioritizedTasks(){
+    public Set<Task> getPrioritizedTasks() {
         return sortedTasks;
     }
 

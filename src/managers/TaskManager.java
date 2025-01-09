@@ -9,6 +9,7 @@ import task.Subtask;
 import task.Task;
 
 import java.util.List;
+import java.util.Set;
 
 public interface TaskManager {
     List<Task> getTasks();
@@ -17,17 +18,17 @@ public interface TaskManager {
 
     List<Subtask> getSubTasks();
 
-    void createTask(TaskDto taskDto) throws TaskIntersectionExeption;
+    boolean createTask(TaskDto taskDto) throws TaskIntersectionExeption;
 
-    void createSubTusk(SubtaskDto subtaskDto);
+    boolean createSubTusk(SubtaskDto subtaskDto);
 
-    void createEpic(EpicDto epicDto);
+    boolean createEpic(EpicDto epicDto);
 
-    void removeAllTasks();
+    boolean removeAllTasks();
 
-    void removeAllEpics();
+    boolean removeAllEpics();
 
-    void removeAllSubTasks();
+    boolean removeAllSubTasks();
 
     Task getTaskById(int id);
 
@@ -35,17 +36,17 @@ public interface TaskManager {
 
     Subtask getSubtaskById(int id);
 
-    void changeTask(TaskDto taskDto);
+    boolean changeTask(TaskDto taskDto);
 
-    void changeSubTask(SubtaskDto subtaskDto);
+    boolean changeSubTask(SubtaskDto subtaskDto);
 
-    void changeEpic(EpicDto epicDto);
+    boolean changeEpic(EpicDto epicDto);
 
-    void removeTaskById(int id);
+    boolean removeTaskById(int id);
 
-    void removeEpicById(int id);
+    boolean removeEpicById(int id);
 
-    void removeSubtaskById(int id);
+    boolean removeSubtaskById(int id);
 
-
+    Set<Task> getPrioritizedTasks();
 }
