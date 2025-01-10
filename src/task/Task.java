@@ -4,7 +4,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
-import java.util.Optional;
 
 public class Task implements Comparable<Task> {
     public static DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd MM yyyy HH:mm");
@@ -116,11 +115,11 @@ public class Task implements Comparable<Task> {
             return -1;
         } else {
 //            if (o instanceof Epic || this instanceof Epic) {
-                if (this.getId() == o.getId()) {
-                    return 0;
-                } else {
-                    return Integer.compare(this.getId(), o.getId());
-                }
+            if (this.getId() == o.getId()) {
+                return 0;
+            } else {
+                return Integer.compare(this.getId(), o.getId());
+            }
 //            }else {
 //                return 0;
 //            }

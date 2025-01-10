@@ -369,7 +369,7 @@ public class InMemoryTaskManager implements TaskManager {
             }
             checkTime = checkTime.plusMinutes(15);
         }
-        while (newStartTime.equals(newEndTime)) {
+        while (!newStartTime.equals(newEndTime)) {
             timeMap.put(newStartTime, false);
             newStartTime = newStartTime.plusMinutes(15);
         }
