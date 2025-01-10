@@ -114,15 +114,11 @@ public class Task implements Comparable<Task> {
         } else if (this.startTime.isBefore(o.startTime)) {
             return -1;
         } else {
-//            if (o instanceof Epic || this instanceof Epic) {
             if (this.getId() == o.getId()) {
                 return 0;
             } else {
                 return Integer.compare(this.getId(), o.getId());
             }
-//            }else {
-//                return 0;
-//            }
         }
 
     }
