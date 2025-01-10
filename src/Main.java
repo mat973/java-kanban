@@ -17,7 +17,6 @@ public class Main {
         HistoryManager historyManager = Managers.getDefaultHistory();
         //  FileBackedTaskManager taskManager = Managers.getFileTaskManager(historyManager);
         TaskManager taskManager = Managers.getFileTaskManager(historyManager);
-
         TaskDto taskDto;
         EpicDto epicDto1;
         EpicDto epicDto2;
@@ -25,13 +24,13 @@ public class Main {
         SubtaskDto subtaskDto2;
         SubtaskDto subtaskDto3;
         SubtaskDto subtaskDto4;
-        taskDto = new TaskDto(0, "task", "Desc", Status.NEW, 150L, "27 02 2024 17:30");
-        epicDto1 = new EpicDto(1, "Epic1", "Desck1", Status.NEW, 150L, "26 02 2024 17:30");
-        epicDto2 = new EpicDto(2, "Epic2", "Desck3", Status.NEW, 150L, "25 02 2024 17:30");
-        subtaskDto1 = new SubtaskDto(3, "Sub1", "Description1", Status.NEW, epicDto1, 150L, "26 02 2024 17:30");
-        subtaskDto2 = new SubtaskDto(4, "Sub2", "Description2", Status.NEW, epicDto1, 150L, "25 02 2024 17:30");
-        subtaskDto3 = new SubtaskDto(5, "Sub3", "Description3", Status.NEW, epicDto2, 150L, "24 02 2024 17:30");
-        subtaskDto4 = new SubtaskDto(5, "Sub3", "Description3", Status.NEW, epicDto2, 150L, "24 02 2024 17:30");
+        taskDto = new TaskDto(0, "task", "Desc", Status.NEW, 150L, "27 02 2025 17:30");
+        epicDto1 = new EpicDto(1, "Epic1", "Desck1", Status.NEW, 150L, "26 02 2025 17:30");
+        epicDto2 = new EpicDto(2, "Epic2", "Desck3", Status.NEW, 150L, "25 02 2025 17:30");
+        subtaskDto1 = new SubtaskDto(3, "Sub1", "Description1", Status.NEW, epicDto1, 150L, "26 02 2025 17:30");
+        subtaskDto2 = new SubtaskDto(4, "Sub2", "Description2", Status.NEW, epicDto1, 150L, "25 02 2025 17:30");
+        subtaskDto3 = new SubtaskDto(5, "Sub3", "Description3", Status.NEW, epicDto2, 150L, "24 02 2025 17:30");
+        subtaskDto4 = new SubtaskDto(5, "Sub3", "Description3", Status.NEW, epicDto2, 150L, "24 02 2025 17:30");
         taskManager.createTask(taskDto);
         taskManager.createEpic(epicDto1);
         taskManager.createEpic(epicDto2);

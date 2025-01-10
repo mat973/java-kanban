@@ -35,10 +35,10 @@ public class Epic extends Task {
 
         }
 
-        result += (startTime.isPresent() && duration.isPresent() ? ", время начала: "
-                + startTime.get().format(outputFormater) + ", продолжительность: "
-                + (duration.get().toHours() >= 1 ? (duration.get().toHours() + " часов ") : "") +
-                (duration.get().toMinutesPart() >= 1 ? (duration.get().toMinutesPart() + " минут") : "") + "]" : "]");
+        result += (startTime != null && duration != null ? ", время начала: "
+                + startTime.format(outputFormater) + ", продолжительность: "
+                + (duration.toHours() >= 1 ? (duration.toHours() + " часов ") : "") +
+                (duration.toMinutesPart() >= 1 ? (duration.toMinutesPart() + " минут") : "") + "]" : "]");
 
 
         return result;

@@ -14,8 +14,8 @@ public class Task implements Comparable<Task> {
     protected String description;
     protected Status status;
     protected String name;
-    protected Optional<Duration> duration;
-    protected Optional<LocalDateTime> startTime;
+    protected Duration duration;
+    protected LocalDateTime startTime;
 
 
     public Task(int id, String name, String description, Status status, Long minutes, String startTime) {
@@ -23,8 +23,8 @@ public class Task implements Comparable<Task> {
         this.description = description;
         this.status = status;
         this.name = name;
-        this.duration = Optional.of(Duration.ofMinutes(minutes));
-        this.startTime = Optional.of(LocalDateTime.parse(startTime, inputFormatter));
+        this.duration = Duration.ofMinutes(minutes);
+        this.startTime = LocalDateTime.parse(startTime, inputFormatter);
     }
 
     public Task(int id, String name, String description, Status status) {
@@ -32,12 +32,10 @@ public class Task implements Comparable<Task> {
         this.description = description;
         this.status = status;
         this.name = name;
-        this.duration = Optional.empty();
-        this.startTime = Optional.empty();
     }
 
     public LocalDateTime getEndTime() {
-        return this.startTime.get().plus(this.duration.get());
+        return this.startTime.plus(this.duration);
     }
 
     public int getId() {
@@ -56,19 +54,19 @@ public class Task implements Comparable<Task> {
         return name;
     }
 
-    public Optional<Duration> getDuration() {
+    public Duration getDuration() {
         return duration;
     }
 
-    public void setDuration(Optional<Duration> duration) {
+    public void setDuration(Duration duration) {
         this.duration = duration;
     }
 
-    public Optional<LocalDateTime> getStartTime() {
+    public LocalDateTime getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(Optional<LocalDateTime> startTime) {
+    public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
     }
 
@@ -88,10 +86,10 @@ public class Task implements Comparable<Task> {
     public String toString() {
         return "ID:" + getId() + " [Название:" + getName() + ", описание:" + getDescription() + ", состояние:"
                 + getStatus().name() +
-                (startTime.isPresent() && duration.isPresent() ? ", время начала: "
-                        + startTime.get().format(outputFormater) + ", продолжительность: "
-                        + (duration.get().toHours() >= 1 ? (duration.get().toHours() + " часов ") : "") +
-                        (duration.get().toMinutesPart() >= 1 ? (duration.get().toMinutesPart() + " минут") : "") + "]" :
+                (startTime != null && duration != null ? ", время начала: "
+                        + startTime.format(outputFormater) + ", продолжительность: "
+                        + (duration.toHours() >= 1 ? (duration.toHours() + " часов ") : "") +
+                        (duration.toMinutesPart() >= 1 ? (duration.toMinutesPart() + " минут") : "") + "]" :
                         "]");
     }
 
@@ -112,16 +110,20 @@ public class Task implements Comparable<Task> {
 
     @Override
     public int compareTo(Task o) {
-        if (this.getStartTime().get().isAfter(o.getStartTime().get())) {
+        if (this.getStartTime().isAfter(o.getStartTime())) {
             return 1;
-        } else if (this.startTime.get().isBefore(o.startTime.get())) {
+        } else if (this.startTime.isBefore(o.startTime)) {
             return -1;
         } else {
-            if (this.getId() == o.getId()) {
-                return 0;
-            } else {
-                return Integer.compare(this.getId(), o.getId());
-            }
+//            if (o instanceof Epic || this instanceof Epic) {
+                if (this.getId() == o.getId()) {
+                    return 0;
+                } else {
+                    return Integer.compare(this.getId(), o.getId());
+                }
+//            }else {
+//                return 0;
+//            }
         }
 
     }

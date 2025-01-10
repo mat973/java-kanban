@@ -3,6 +3,7 @@ package managers;
 import dto.EpicDto;
 import dto.SubtaskDto;
 import dto.TaskDto;
+import exeptions.AlotOfPlanExeption;
 import exeptions.EpicNotExistException;
 import exeptions.TaskIntersectionExeption;
 import task.Epic;
@@ -55,15 +56,18 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public boolean createTask(TaskDto taskDto) throws TaskIntersectionExeption {
+    public boolean createTask(TaskDto taskDto) {
         Task task;
-        if (taskDto.getStartTime().isPresent() && taskDto.getDuration().isPresent()) {
+        if (taskDto.getStartTime() != null && taskDto.getDuration() != null) {
             task = new Task(generateId(), taskDto.getName(), taskDto.getDescription(), Status.NEW,
-                    taskDto.getDuration().get(), taskDto.getStartTime().get());
+                    taskDto.getDuration(), taskDto.getStartTime());
             try {
                 checkIntersectionTask(task);
             } catch (TaskIntersectionExeption e) {
-                System.out.println(e.getMessage());
+                System.out.println("Здача " + task.getName() + " не может быть созданна т.к." + e.getMessage());
+                return false;
+            } catch (AlotOfPlanExeption e) {
+                System.out.println("Если хочешь насмешить бога, расскажи ему о своих планах." + e.getMessage());
                 return false;
             }
             sortedTasks.add(task);
@@ -82,13 +86,16 @@ public class InMemoryTaskManager implements TaskManager {
         }
         Epic epic = epicTasks.get(subtaskDto.getEpicId());
         Subtask subtask;
-        if (subtaskDto.getStartTime().isPresent() && subtaskDto.getDuration().isPresent()) {
+        if (subtaskDto.getStartTime() != null && subtaskDto.getDuration() != null) {
             subtask = new Subtask(generateId(), subtaskDto.getName(), subtaskDto.getDescription(), Status.NEW,
-                    epic.getId(), subtaskDto.getDuration().get(), subtaskDto.getStartTime().get());
+                    epic.getId(), subtaskDto.getDuration(), subtaskDto.getStartTime());
             try {
                 checkIntersectionTask(subtask);
             } catch (TaskIntersectionExeption e) {
-                System.out.println(e.getMessage());
+                System.out.println("Подзадача " + subtask.getName() + " не может быть созданна т.к. " + e.getMessage());
+                return false;
+            } catch (AlotOfPlanExeption e) {
+                System.out.println("Если хочешь насмешить бога, расскажи ему о своих планах." + e.getMessage());
                 return false;
             }
             sortedTasks.add(subtask);
@@ -136,36 +143,36 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Task getTaskById(int id) {
+    public Optional<Task> getTaskById(int id) {
         if (!tasks.containsKey(id)) {
             System.out.println("Такой задачи не существует");
-            return null;
+            return Optional.empty();
         }
         Task task = tasks.get(id);
         historyManager.addToHistory(task);
-        return task;
+        return Optional.of(task);
     }
 
     @Override
-    public Epic getEpicById(int id) {
+    public Optional<Epic> getEpicById(int id) {
         if (!epicTasks.containsKey(id)) {
             System.out.println("Такого эпика не существует");
-            return null;
+            return Optional.empty();
         }
         Epic epic = epicTasks.get(id);
         historyManager.addToHistory(epic);
-        return epic;
+        return Optional.of(epic);
     }
 
     @Override
-    public Subtask getSubtaskById(int id) {
+    public Optional<Subtask> getSubtaskById(int id) {
         if (!subTasks.containsKey(id)) {
             System.out.println("Такой подзадачи не существует");
-            return null;
+            return Optional.empty();
         }
         Subtask subtask = subTasks.get(id);
         historyManager.addToHistory(subtask);
-        return subtask;
+        return Optional.of(subtask);
     }
 
 
@@ -179,13 +186,16 @@ public class InMemoryTaskManager implements TaskManager {
         Task oldTask = tasks.get(taskDto.getId());
         sortedTasks.remove(oldTask);
         Task task;
-        if (taskDto.getDuration().isPresent() && taskDto.getStartTime().isPresent()) {
+        if (taskDto.getDuration() != null && taskDto.getStartTime() != null) {
             task = new Task(taskDto.getId(), taskDto.getName(), taskDto.getDescription(), taskDto.getStatus(),
-                    taskDto.getDuration().get(), taskDto.getStartTime().get());
+                    taskDto.getDuration(), taskDto.getStartTime());
             try {
                 checkIntersectionTask(task);
             } catch (TaskIntersectionExeption e) {
-                System.out.println(e.getMessage());
+                System.out.println("Задача " + task.getName() + "не омжет быть онавлена т.к." + e.getMessage());
+                return false;
+            } catch (AlotOfPlanExeption e) {
+                System.out.println("Если хочешь насмешить бога, расскажи ему о своих планах." + e.getMessage());
                 return false;
             }
             sortedTasks.add(task);
@@ -206,14 +216,17 @@ public class InMemoryTaskManager implements TaskManager {
         Subtask oldSubtask = subTasks.get(subtaskDto.getId());
         sortedTasks.remove(oldSubtask);
         Subtask subtask;
-        if (subtaskDto.getStartTime().isPresent() && subtaskDto.getDuration().isPresent()) {
+        if (subtaskDto.getStartTime() != null && subtaskDto.getDuration() != null) {
             subtask = new Subtask(subtaskDto.getId(), subtaskDto.getName(),
                     subtaskDto.getDescription(), subtaskDto.getStatus(), subtaskDto.getEpicId(),
-                    subtaskDto.getDuration().get(), subtaskDto.getStartTime().get());
+                    subtaskDto.getDuration(), subtaskDto.getStartTime());
             try {
                 checkIntersectionTask(subtask);
             } catch (TaskIntersectionExeption e) {
-                System.out.println(e.getMessage());
+                System.out.println("Подзадача " + subtask.getName() + " неможет быть обновлена т.к. " + e.getMessage());
+                return false;
+            } catch (AlotOfPlanExeption e) {
+                System.out.println("Если хочешь насмешить бога, расскажи ему о своих планах." + e.getMessage());
                 return false;
             }
             sortedTasks.add(subtask);
@@ -299,7 +312,7 @@ public class InMemoryTaskManager implements TaskManager {
 
 
     private void checkCondition(Epic epic) {
-        if (epic.getStartTime().isPresent() && epic.getDuration().isPresent()) {
+        if (epic.getStartTime() != null && epic.getDuration() != null) {
             sortedTasks.remove(epic);
         }
         if ((epic.getSubtasks().isEmpty()
@@ -312,21 +325,19 @@ public class InMemoryTaskManager implements TaskManager {
             epic.setCondition(Status.IN_PROGRESS);
         }
         List<Subtask> validSubTask = epic.getSubtasks().stream()
-                .filter(obj -> obj.getStartTime().isPresent() && obj.getDuration().isPresent())
+                .filter(obj -> obj.getStartTime() != null && obj.getDuration() != null)
                 .toList();
         if (validSubTask.isEmpty()) {
-            epic.setStartTime(Optional.empty());
-            epic.setDuration(Optional.empty());
             return;
         }
-        Optional<LocalDateTime> startTIme = validSubTask.stream()
-                .map(sub -> sub.getStartTime().get())
-                .min(LocalDateTime::compareTo);
+        LocalDateTime startTIme = validSubTask.stream()
+                .map(sub -> sub.getStartTime())
+                .min(LocalDateTime::compareTo).get();
         epic.setStartTime(startTIme);
         LocalDateTime endTime = validSubTask.stream()
                 .max(Task::compareTo)
                 .get().getEndTime();
-        epic.setDuration(Optional.of(Duration.between(startTIme.get(), endTime)));
+        epic.setDuration(Duration.between(startTIme, endTime));
         sortedTasks.add(epic);
     }
 
@@ -343,23 +354,24 @@ public class InMemoryTaskManager implements TaskManager {
         return sortedTasks;
     }
 
-    public void checkIntersectionTask(Task task) throws TaskIntersectionExeption {
-        LocalDateTime taskStart = task.getStartTime().get();
+    public void checkIntersectionTask(Task task) throws TaskIntersectionExeption, AlotOfPlanExeption {
+        LocalDateTime taskStart = task.getStartTime();
         LocalDateTime taskEnd = task.getEndTime();
-
-        for (Task existingTask : sortedTasks) {
-            LocalDateTime existingStart = existingTask.getStartTime().get();
-            LocalDateTime existingEnd = existingTask.getEndTime();
-
-            if (existingStart.isAfter(taskEnd)) {
-                break;
-            }
-
-            if (taskStart.isBefore(existingEnd) && taskEnd.isAfter(existingStart)) {
-                throw new TaskIntersectionExeption("На это время запланированно выполнение задачи "
-                        + existingTask.getName());
-            }
+        if (taskStart.getYear() < 2025 || taskStart.getYear() > 2035 || taskEnd.getYear() > 2035) {
+            throw new AlotOfPlanExeption("Мы не строим планы так на долго!");
         }
-
+        LocalDateTime newStartTime = taskStart.minusMinutes(taskStart.getMinute() % 15);
+        LocalDateTime newEndTime = taskEnd.minusMinutes(taskEnd.getMinute() % 15).plusMinutes(15);
+        LocalDateTime checkTime = newStartTime;
+        while (!checkTime.equals(newEndTime)) {
+            if (!timeMap.get(newStartTime)) {
+                throw new TaskIntersectionExeption("на это время запланированно выполнение другой задачи.");
+            }
+            checkTime = checkTime.plusMinutes(15);
+        }
+        while (newStartTime.equals(newEndTime)) {
+            timeMap.put(newStartTime, false);
+            newStartTime = newStartTime.plusMinutes(15);
+        }
     }
 }

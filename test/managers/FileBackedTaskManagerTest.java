@@ -51,22 +51,22 @@ class FileBackedTaskManagerTest {
 
     @Test
     public void taskShouldBeEqualsWithEqualsId() {
-        Task task1 = taskManager.getTaskById(0);
-        Task task2 = taskManager.getTaskById(0);
+        Task task1 = taskManager.getTaskById(0).get();
+        Task task2 = taskManager.getTaskById(0).get();
         assertEquals(task1, task2);
     }
 
     @Test
     public void epicShouldBeEqualsWithEqualsId() {
-        Epic task1 = taskManager.getEpicById(1);
-        Epic task2 = taskManager.getEpicById(1);
+        Epic task1 = taskManager.getEpicById(1).get();
+        Epic task2 = taskManager.getEpicById(1).get();
         assertEquals(task1, task2);
     }
 
     @Test
     public void subtaskShouldBeEqualsWithEqualsId() {
-        Subtask task1 = taskManager.getSubtaskById(3);
-        Subtask task2 = taskManager.getSubtaskById(3);
+        Subtask task1 = taskManager.getSubtaskById(3).get();
+        Subtask task2 = taskManager.getSubtaskById(3).get();
         assertEquals(task1, task2);
     }
 
@@ -123,10 +123,10 @@ class FileBackedTaskManagerTest {
         taskManager.changeSubTask(subtaskDto3);
         taskManager.changeSubTask(subtaskDto1);
         taskManager.changeSubTask(subtaskDto2);
-        assertEquals(Status.IN_PROGRESS, taskManager.getEpicById(epicDto1.getId()).getStatus());
-        assertEquals(Status.DONE, taskManager.getEpicById(epicDto2.getId()).getStatus());
+        assertEquals(Status.IN_PROGRESS, taskManager.getEpicById(epicDto1.getId()).get().getStatus());
+        assertEquals(Status.DONE, taskManager.getEpicById(epicDto2.getId()).get().getStatus());
         taskManager.removeSubtaskById(subtaskDto3.getId());
-        assertEquals(Status.NEW, taskManager.getEpicById(epicDto2.getId()).getStatus());
+        assertEquals(Status.NEW, taskManager.getEpicById(epicDto2.getId()).get().getStatus());
     }
 
     @Test

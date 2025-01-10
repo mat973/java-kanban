@@ -283,13 +283,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     private String taskToString(Task task) {
         StringBuilder stringBuilder = new StringBuilder(task.getId() + "," + TaskType.TASK + "," + task.getName() + ","
                 + task.getDescription() + "," + task.getStatus());
-        if (task.getStartTime().isPresent() && task.getDuration().isPresent()) {
-            Duration duration = task.getDuration().get();
+        if (task.getStartTime() != null && task.getDuration() != null) {
+            Duration duration = task.getDuration();
             long hours = duration.toHours();
             long minutes = duration.toMinutesPart();
             String formattedDuration = String.format("%02d:%02d", hours, minutes);
             stringBuilder.append(",").append(formattedDuration).append(",")
-                    .append(task.getStartTime().get().format(Task.inputFormatter));
+                    .append(task.getStartTime().format(Task.inputFormatter));
         }
         stringBuilder.append("\n");
         return stringBuilder.toString();
@@ -298,13 +298,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     private String epicToString(Epic epic) {
         StringBuilder stringBuilder = new StringBuilder(epic.getId() + "," + TaskType.EPIC + "," + epic.getName() + ","
                 + epic.getDescription() + "," + epic.getStatus());
-        if (epic.getStartTime().isPresent() && epic.getDuration().isPresent()) {
-            Duration duration = epic.getDuration().get();
+        if (epic.getStartTime() != null && epic.getDuration() != null) {
+            Duration duration = epic.getDuration();
             long hours = duration.toHours();
             long minutes = duration.toMinutesPart();
             String formattedDuration = String.format("%02d:%02d", hours, minutes);
             stringBuilder.append(",").append(formattedDuration).append(",")
-                    .append(epic.getStartTime().get().format(Task.inputFormatter));
+                    .append(epic.getStartTime().format(Task.inputFormatter));
         }
         stringBuilder.append("\n");
         return stringBuilder.toString();
@@ -314,13 +314,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         StringBuilder stringBuilder = new StringBuilder(subtask.getId() + "," + TaskType.SUBTASK + ","
                 + subtask.getName() + "," + subtask.getDescription() + "," + subtask.getStatus()
                 + "," + subtask.getEpicId());
-        if (subtask.getStartTime().isPresent() && subtask.getDuration().isPresent()) {
-            Duration duration = subtask.getDuration().get();
+        if (subtask.getStartTime() != null && subtask.getDuration() != null) {
+            Duration duration = subtask.getDuration();
             long hours = duration.toHours();
             long minutes = duration.toMinutesPart();
             String formattedDuration = String.format("%02d:%02d", hours, minutes);
             stringBuilder.append(",").append(formattedDuration).append(",")
-                    .append(subtask.getStartTime().get().format(Task.inputFormatter));
+                    .append(subtask.getStartTime().format(Task.inputFormatter));
         }
         stringBuilder.append("\n");
         return stringBuilder.toString();

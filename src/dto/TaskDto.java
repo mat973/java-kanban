@@ -2,26 +2,22 @@ package dto;
 
 import task.Status;
 
-import java.util.Optional;
-
 public class TaskDto {
     private int id;
     private String description;
     private Status status;
     private String name;
-    private Optional<Long> duration;
-    private Optional<String> startTime;
+    private Long duration;
+    private String startTime;
 
 
-
-
-    public TaskDto(int id, String name, String description, Status status,Long minutes, String startTime) {
+    public TaskDto(int id, String name, String description, Status status, Long minutes, String startTime) {
         this.id = id;
         this.description = description;
         this.status = status;
         this.name = name;
-        this.duration = Optional.ofNullable(minutes);
-        this.startTime = Optional.ofNullable(startTime);
+        this.duration = minutes;
+        this.startTime = startTime;
     }
 
     public TaskDto(int id, String description, String name, Status status) {
@@ -29,8 +25,7 @@ public class TaskDto {
         this.description = description;
         this.status = status;
         this.name = name;
-        this.duration = Optional.empty();
-        this.startTime = Optional.empty();
+
     }
 
     public Integer getId() {
@@ -65,11 +60,11 @@ public class TaskDto {
         this.name = name;
     }
 
-    public Optional<Long> getDuration() {
+    public Long getDuration() {
         return duration;
     }
 
-    public Optional<String> getStartTime() {
+    public String getStartTime() {
         return startTime;
     }
 }

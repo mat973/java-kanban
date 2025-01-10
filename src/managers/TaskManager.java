@@ -9,6 +9,7 @@ import task.Subtask;
 import task.Task;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public interface TaskManager {
@@ -30,11 +31,11 @@ public interface TaskManager {
 
     boolean removeAllSubTasks();
 
-    Task getTaskById(int id);
+    Optional<Task> getTaskById(int id);
 
-    Epic getEpicById(int id);
+    Optional<Epic> getEpicById(int id);
 
-    Subtask getSubtaskById(int id);
+    Optional<Subtask> getSubtaskById(int id);
 
     boolean changeTask(TaskDto taskDto);
 
