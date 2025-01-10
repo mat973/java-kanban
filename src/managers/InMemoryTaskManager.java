@@ -21,11 +21,18 @@ public class InMemoryTaskManager implements TaskManager {
     protected final Map<Integer, Epic> epicTasks = new HashMap<>();
     protected final Map<Integer, Subtask> subTasks = new HashMap<>();
     protected final Set<Task> sortedTasks = new TreeSet<>();
+    protected final Map<LocalDateTime, Boolean> timeMap = new HashMap<>();
+    LocalDateTime start = LocalDateTime.of(2025, 1, 1, 0, 0);
+    LocalDateTime end = start.plusYears(10);
 
     private final HistoryManager historyManager;
 
     public InMemoryTaskManager(HistoryManager historyManager) {
         this.historyManager = historyManager;
+        while (start.isBefore(end)) {
+            timeMap.put(start, true);
+            start = start.plusMinutes(15);
+        }
     }
 
     @Override
