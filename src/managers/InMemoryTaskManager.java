@@ -121,12 +121,14 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public boolean removeAllTasks() {
+        getTasks().forEach(this::freeingMemory);
         tasks.clear();
         return true;
     }
 
     @Override
     public boolean removeAllEpics() {
+        getSubTasks().forEach(this::freeingMemory);
         subTasks.clear();
         epicTasks.clear();
         return true;
@@ -134,6 +136,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public boolean removeAllSubTasks() {
+        getSubTasks().forEach(this::freeingMemory);
         subTasks.clear();
         for (Integer i : epicTasks.keySet()) {
             epicTasks.get(i).getSubtasks().clear();
@@ -184,7 +187,10 @@ public class InMemoryTaskManager implements TaskManager {
             return false;
         }
         Task oldTask = tasks.get(taskDto.getId());
-        sortedTasks.remove(oldTask);
+        if (sortedTasks.contains(oldTask)) {
+            sortedTasks.remove(oldTask);
+            freeingMemory(oldTask);
+        }
         Task task;
         if (taskDto.getDuration() != null && taskDto.getStartTime() != null) {
             task = new Task(taskDto.getId(), taskDto.getName(), taskDto.getDescription(), taskDto.getStatus(),
@@ -214,7 +220,10 @@ public class InMemoryTaskManager implements TaskManager {
             return false;
         }
         Subtask oldSubtask = subTasks.get(subtaskDto.getId());
-        sortedTasks.remove(oldSubtask);
+        if (sortedTasks.contains(oldSubtask)) {
+            sortedTasks.remove(oldSubtask);
+            freeingMemory(oldSubtask);
+        }
         Subtask subtask;
         if (subtaskDto.getStartTime() != null && subtaskDto.getDuration() != null) {
             subtask = new Subtask(subtaskDto.getId(), subtaskDto.getName(),
@@ -269,7 +278,11 @@ public class InMemoryTaskManager implements TaskManager {
             System.out.println("Такой задачи не существует");
             return false;
         }
-        sortedTasks.remove(getTaskById(id));
+        Task task = getTaskById(id).get();
+        if (sortedTasks.contains(task)) {
+            sortedTasks.remove(task);
+            freeingMemory(task);
+        }
         historyManager.remove(id);
         tasks.remove(id);
         return true;
@@ -303,7 +316,10 @@ public class InMemoryTaskManager implements TaskManager {
         Epic epic = epicTasks.get(subtask.getEpicId());
         epic.getSubtasks().remove(subTasks.get(subtask.getId()));
         historyManager.remove(id);
-        sortedTasks.remove(subtask);
+        if (sortedTasks.contains(subtask)) {
+            sortedTasks.remove(subtask);
+            freeingMemory(subtask);
+        }
         subTasks.remove(subtask.getId());
         checkCondition(epic);
         epicTasks.put(epic.getId(), epic);
@@ -354,7 +370,7 @@ public class InMemoryTaskManager implements TaskManager {
         return sortedTasks;
     }
 
-    public void checkIntersectionTask(Task task) throws TaskIntersectionExeption, AlotOfPlanExeption {
+    private void checkIntersectionTask(Task task) throws TaskIntersectionExeption, AlotOfPlanExeption {
         LocalDateTime taskStart = task.getStartTime();
         LocalDateTime taskEnd = task.getEndTime();
         if (taskStart.getYear() < 2025 || taskStart.getYear() > 2035 || taskEnd.getYear() > 2035) {
@@ -372,6 +388,17 @@ public class InMemoryTaskManager implements TaskManager {
         while (!newStartTime.equals(newEndTime)) {
             timeMap.put(newStartTime, false);
             newStartTime = newStartTime.plusMinutes(15);
+        }
+    }
+
+    private void freeingMemory(Task task) {
+        LocalDateTime taskStart = task.getStartTime();
+        LocalDateTime taskEnd = task.getEndTime();
+        taskStart = taskStart.minusMinutes(taskStart.getMinute() % 15);
+        taskEnd = taskEnd.minusMinutes(taskEnd.getMinute() % 15).plusMinutes(15);
+        while (!taskStart.equals(taskEnd)) {
+            timeMap.put(taskStart, true);
+            taskStart = taskStart.plusMinutes(15);
         }
     }
 }

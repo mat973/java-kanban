@@ -30,13 +30,15 @@ public class Main {
         subtaskDto1 = new SubtaskDto(3, "Sub1", "Description1", Status.NEW, epicDto1, 150L, "26 02 2025 17:30");
         subtaskDto2 = new SubtaskDto(4, "Sub2", "Description2", Status.NEW, epicDto1, 150L, "25 02 2025 17:30");
         subtaskDto3 = new SubtaskDto(5, "Sub3", "Description3", Status.NEW, epicDto2, 150L, "24 02 2025 17:30");
-        subtaskDto4 = new SubtaskDto(5, "Sub3", "Description3", Status.NEW, epicDto2, 150L, "24 02 2025 17:30");
+        subtaskDto4 = new SubtaskDto(5, "Sub33", "Description33", Status.NEW, epicDto2, 150L, "24 02 2025 17:30");
         taskManager.createTask(taskDto);
         taskManager.createEpic(epicDto1);
         taskManager.createEpic(epicDto2);
         taskManager.createSubTusk(subtaskDto1);
         taskManager.createSubTusk(subtaskDto2);
         taskManager.createSubTusk(subtaskDto3);
+        taskManager.createSubTusk(subtaskDto4);
+        taskManager.removeSubtaskById(subtaskDto3.getId());
         taskManager.createSubTusk(subtaskDto4);
         //      System.out.println(taskManager.getTasks());
         //       System.out.println(taskManager.getEpicTasks());
