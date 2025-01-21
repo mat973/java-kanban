@@ -4,7 +4,6 @@ import dto.EpicDto;
 import dto.SubtaskDto;
 import dto.TaskDto;
 import exeptions.BadMemoryException;
-import exeptions.EpicNotExistException;
 import exeptions.ManagerSaveException;
 import task.*;
 
@@ -12,6 +11,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.List;
 
 
@@ -77,129 +77,175 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
 
     @Override
-    public void createTask(TaskDto taskDto) {
-        super.createTask(taskDto);
+    public boolean createTask(TaskDto taskDto) {
+        if (!super.createTask(taskDto)) {
+            return false;
+        }
         try {
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
         }
+        return true;
     }
 
     @Override
-    public void createSubTusk(SubtaskDto subtaskDto) {
-        try {
-            super.createSubTusk(subtaskDto);
-        } catch (EpicNotExistException e) {
-            System.out.println("Epic с таким id не существует: " + subtaskDto.getEpicId());
-            return;
+    public boolean createSubTusk(SubtaskDto subtaskDto) {
+        if (!super.createSubTusk(subtaskDto)) {
+            return false;
         }
         try {
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
+            return false;
         }
+        return true;
     }
 
     @Override
-    public void createEpic(EpicDto epicDto) {
-        super.createEpic(epicDto);
+    public boolean createEpic(EpicDto epicDto) {
+        if (!super.createEpic(epicDto)) {
+            return false;
+        }
         try {
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
+            return false;
         }
+        return true;
     }
 
     @Override
-    public void removeAllTasks() {
-        super.removeAllTasks();
+    public boolean removeAllTasks() {
+        if (!super.removeAllTasks()) {
+            return false;
+        }
         try {
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
+            return false;
         }
+        return true;
     }
 
     @Override
-    public void removeAllEpics() {
-        super.removeAllEpics();
+    public boolean removeAllEpics() {
+        if (super.removeAllEpics()) {
+            return false;
+        }
         try {
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
+            return false;
         }
+        return true;
     }
 
     @Override
-    public void removeAllSubTasks() {
-        super.removeAllSubTasks();
+    public boolean removeAllSubTasks() {
+        if (!super.removeAllSubTasks()) {
+            return false;
+        }
         try {
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
+            return false;
         }
+        return true;
 
     }
 
     @Override
-    public void changeTask(TaskDto taskDto) {
-        super.changeTask(taskDto);
+    public boolean changeTask(TaskDto taskDto) {
+
+        if (!super.changeTask(taskDto)) {
+            return false;
+        }
+
         try {
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
+            return false;
         }
+        return true;
     }
 
     @Override
-    public void changeSubTask(SubtaskDto subtaskDto) {
-        super.changeSubTask(subtaskDto);
+    public boolean changeSubTask(SubtaskDto subtaskDto) {
+
+        if (!super.changeSubTask(subtaskDto)) {
+            return false;
+        }
+
         try {
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
+            return false;
         }
+        return true;
     }
 
     @Override
-    public void changeEpic(EpicDto epicDto) {
-        super.changeEpic(epicDto);
+    public boolean changeEpic(EpicDto epicDto) {
+        if (super.changeEpic(epicDto)) {
+            return false;
+        }
         try {
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
+            return false;
         }
+        return true;
     }
 
     @Override
-    public void removeTaskById(int id) {
-        super.removeTaskById(id);
+    public boolean removeTaskById(int id) {
+        if (!super.removeTaskById(id)) {
+            return false;
+        }
         try {
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
+            return false;
         }
+        return true;
     }
 
     @Override
-    public void removeEpicById(int id) {
-        super.removeEpicById(id);
+    public boolean removeEpicById(int id) {
+        if (super.removeEpicById(id)) {
+            return false;
+        }
         try {
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
+            return false;
         }
+        return true;
     }
 
     @Override
-    public void removeSubtaskById(int id) {
-        super.removeSubtaskById(id);
+    public boolean removeSubtaskById(int id) {
+        if (!super.removeSubtaskById(id)) {
+            return false;
+        }
         try {
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
+            return false;
         }
+        return true;
     }
 
 
@@ -235,31 +281,77 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     private String taskToString(Task task) {
-        return task.getId() + "," + TaskType.TASK + "," + task.getName() + "," + task.getStatus() +
-                "," + task.getDescription() + "\n";
+        StringBuilder stringBuilder = new StringBuilder(task.getId() + "," + TaskType.TASK + "," + task.getName() + ","
+                + task.getDescription() + "," + task.getStatus());
+        if (task.getStartTime() != null && task.getDuration() != null) {
+            Duration duration = task.getDuration();
+            long hours = duration.toHours();
+            long minutes = duration.toMinutesPart();
+            String formattedDuration = String.format("%02d:%02d", hours, minutes);
+            stringBuilder.append(",").append(formattedDuration).append(",")
+                    .append(task.getStartTime().format(Task.inputFormatter));
+        }
+        stringBuilder.append("\n");
+        return stringBuilder.toString();
     }
 
     private String epicToString(Epic epic) {
-        return epic.getId() + "," + TaskType.EPIC + "," + epic.getName() + "," + epic.getStatus() +
-                "," + epic.getDescription() + "\n";
+        StringBuilder stringBuilder = new StringBuilder(epic.getId() + "," + TaskType.EPIC + "," + epic.getName() + ","
+                + epic.getDescription() + "," + epic.getStatus());
+        if (epic.getStartTime() != null && epic.getDuration() != null) {
+            Duration duration = epic.getDuration();
+            long hours = duration.toHours();
+            long minutes = duration.toMinutesPart();
+            String formattedDuration = String.format("%02d:%02d", hours, minutes);
+            stringBuilder.append(",").append(formattedDuration).append(",")
+                    .append(epic.getStartTime().format(Task.inputFormatter));
+        }
+        stringBuilder.append("\n");
+        return stringBuilder.toString();
     }
 
     private String subtaskToString(Subtask subtask) {
-        return subtask.getId() + "," + TaskType.SUBTASK + "," + subtask.getName() + "," + subtask.getStatus() +
-                "," + subtask.getDescription() + "," + subtask.getEpicId() + "\n";
+        StringBuilder stringBuilder = new StringBuilder(subtask.getId() + "," + TaskType.SUBTASK + ","
+                + subtask.getName() + "," + subtask.getDescription() + "," + subtask.getStatus()
+                + "," + subtask.getEpicId());
+        if (subtask.getStartTime() != null && subtask.getDuration() != null) {
+            Duration duration = subtask.getDuration();
+            long hours = duration.toHours();
+            long minutes = duration.toMinutesPart();
+            String formattedDuration = String.format("%02d:%02d", hours, minutes);
+            stringBuilder.append(",").append(formattedDuration).append(",")
+                    .append(subtask.getStartTime().format(Task.inputFormatter));
+        }
+        stringBuilder.append("\n");
+        return stringBuilder.toString();
     }
 
     private Task stringToTask(String[] sLine) {
-        return new Task(Integer.parseInt(sLine[0]), sLine[2], sLine[4], Status.getStatus(sLine[3]));
+        if (sLine.length == 5) {
+            return new Task(Integer.parseInt(sLine[0]), sLine[2], sLine[3], Status.getStatus(sLine[4]));
+        } else {
+            return new Task(Integer.parseInt(sLine[0]), sLine[2], sLine[3], Status.getStatus(sLine[4]),
+                    localParser(sLine[5]), sLine[6]);
+        }
     }
 
     private Epic stringToEpic(String[] sLine) {
-        return new Epic(Integer.parseInt(sLine[0]), sLine[2], sLine[4], Status.getStatus(sLine[3]));
+        if (sLine.length == 5) {
+            return new Epic(Integer.parseInt(sLine[0]), sLine[2], sLine[3], Status.getStatus(sLine[4]));
+        } else {
+            return new Epic(Integer.parseInt(sLine[0]), sLine[2], sLine[3], Status.getStatus(sLine[4]),
+                    localParser(sLine[5]), sLine[6]);
+        }
     }
 
     private Subtask stringToSubtask(String[] sLine) {
-        return new Subtask(Integer.parseInt(sLine[0]), sLine[2], sLine[4], Status.getStatus(sLine[3]),
-                Integer.parseInt(sLine[5]));
+        if (sLine.length == 6) {
+            return new Subtask(Integer.parseInt(sLine[0]), sLine[2], sLine[3], Status.getStatus(sLine[4]),
+                    Integer.parseInt(sLine[5]));
+        } else {
+            return new Subtask(Integer.parseInt(sLine[0]), sLine[2], sLine[3], Status.getStatus(sLine[4]),
+                    Integer.parseInt(sLine[5]), localParser(sLine[6]), sLine[7]);
+        }
     }
 
     public static void deleteFile() {
@@ -271,5 +363,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             System.out.println("Файл не найде");
             throw new RuntimeException("Не повезло");
         }
+    }
+
+    private Long localParser(String s) {
+        String[] strs = s.split(":");
+        return Long.parseLong(strs[0]) * 60 + Long.parseLong(strs[1]);
     }
 }

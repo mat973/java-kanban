@@ -7,12 +7,25 @@ public class TaskDto {
     private String description;
     private Status status;
     private String name;
+    private Long duration;
+    private String startTime;
 
-    public TaskDto(int id, String name, String description, Status status) {
+
+    public TaskDto(int id, String name, String description, Status status, Long minutes, String startTime) {
         this.id = id;
         this.description = description;
         this.status = status;
         this.name = name;
+        this.duration = minutes;
+        this.startTime = startTime;
+    }
+
+    public TaskDto(int id, String description, String name, Status status) {
+        this.id = id;
+        this.description = description;
+        this.status = status;
+        this.name = name;
+
     }
 
     public Integer getId() {
@@ -45,5 +58,13 @@ public class TaskDto {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Long getDuration() {
+        return duration;
+    }
+
+    public String getStartTime() {
+        return startTime;
     }
 }
