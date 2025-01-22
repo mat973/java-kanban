@@ -3,7 +3,10 @@ package managers;
 import dto.EpicDto;
 import dto.SubtaskDto;
 import dto.TaskDto;
-import exeptions.TaskIntersectionExeption;
+import exeptions.EpicNotExistException;
+import exeptions.SubtaskNotFoundException;
+import exeptions.TaskIntersectionException;
+import exeptions.TaskNotFoundException;
 import task.Epic;
 import task.Subtask;
 import task.Task;
@@ -19,35 +22,35 @@ public interface TaskManager {
 
     List<Subtask> getSubTasks();
 
-    boolean createTask(TaskDto taskDto) throws TaskIntersectionExeption;
+    void createTask(TaskDto taskDto) throws TaskIntersectionException;
 
-    boolean createSubTusk(SubtaskDto subtaskDto);
+    void createSubTusk(SubtaskDto subtaskDto) throws EpicNotExistException, TaskIntersectionException;
 
-    boolean createEpic(EpicDto epicDto);
+    void createEpic(EpicDto epicDto);
 
-    boolean removeAllTasks();
+    void removeAllTasks();
 
-    boolean removeAllEpics();
+    void removeAllEpics();
 
-    boolean removeAllSubTasks();
+    void removeAllSubTasks();
 
-    Optional<Task> getTaskById(int id);
+    Optional<Task> getTaskById(int id) throws TaskNotFoundException;
 
-    Optional<Epic> getEpicById(int id);
+    Optional<Epic> getEpicById(int id) throws EpicNotExistException;
 
-    Optional<Subtask> getSubtaskById(int id);
+    Optional<Subtask> getSubtaskById(int id) throws EpicNotExistException;
 
-    boolean changeTask(TaskDto taskDto);
+    void changeTask(TaskDto taskDto) throws TaskNotFoundException, TaskIntersectionException;
 
-    boolean changeSubTask(SubtaskDto subtaskDto);
+    void changeSubTask(SubtaskDto subtaskDto) throws SubtaskNotFoundException, TaskIntersectionException;
 
-    boolean changeEpic(EpicDto epicDto);
+    void changeEpic(EpicDto epicDto);
 
-    boolean removeTaskById(int id);
+    void removeTaskById(int id) throws TaskNotFoundException;
 
-    boolean removeEpicById(int id);
+    void removeEpicById(int id) throws EpicNotExistException;
 
-    boolean removeSubtaskById(int id);
+    void removeSubtaskById(int id) throws SubtaskNotFoundException;
 
     Set<Task> getPrioritizedTasks();
 }

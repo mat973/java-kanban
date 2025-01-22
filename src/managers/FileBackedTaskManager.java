@@ -77,175 +77,124 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
 
     @Override
-    public boolean createTask(TaskDto taskDto) {
-        if (!super.createTask(taskDto)) {
-            return false;
-        }
+    public void createTask(TaskDto taskDto) {
         try {
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
+            throw e;
         }
-        return true;
     }
 
     @Override
-    public boolean createSubTusk(SubtaskDto subtaskDto) {
-        if (!super.createSubTusk(subtaskDto)) {
-            return false;
-        }
+    public void createSubTusk(SubtaskDto subtaskDto) {
         try {
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
-            return false;
+            throw e;
         }
-        return true;
     }
 
     @Override
-    public boolean createEpic(EpicDto epicDto) {
-        if (!super.createEpic(epicDto)) {
-            return false;
-        }
+    public void createEpic(EpicDto epicDto) {
         try {
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
-            return false;
+            throw e;
         }
-        return true;
     }
 
     @Override
-    public boolean removeAllTasks() {
-        if (!super.removeAllTasks()) {
-            return false;
-        }
+    public void removeAllTasks() {
         try {
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
-            return false;
+            throw e;
         }
-        return true;
     }
 
     @Override
-    public boolean removeAllEpics() {
-        if (super.removeAllEpics()) {
-            return false;
-        }
+    public void removeAllEpics() {
         try {
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
-            return false;
+            throw e;
         }
-        return true;
     }
 
     @Override
-    public boolean removeAllSubTasks() {
-        if (!super.removeAllSubTasks()) {
-            return false;
-        }
+    public void removeAllSubTasks() {
         try {
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
-            return false;
+            throw e;
         }
-        return true;
 
     }
 
     @Override
-    public boolean changeTask(TaskDto taskDto) {
-
-        if (!super.changeTask(taskDto)) {
-            return false;
-        }
-
+    public void changeTask(TaskDto taskDto) {
         try {
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
-            return false;
+            throw e;
         }
-        return true;
     }
 
     @Override
-    public boolean changeSubTask(SubtaskDto subtaskDto) {
-
-        if (!super.changeSubTask(subtaskDto)) {
-            return false;
-        }
-
+    public void changeSubTask(SubtaskDto subtaskDto) {
         try {
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
-            return false;
+            throw e;
         }
-        return true;
     }
 
     @Override
-    public boolean changeEpic(EpicDto epicDto) {
-        if (super.changeEpic(epicDto)) {
-            return false;
-        }
+    public void changeEpic(EpicDto epicDto) {
         try {
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
-            return false;
+            throw e;
         }
-        return true;
     }
 
     @Override
-    public boolean removeTaskById(int id) {
-        if (!super.removeTaskById(id)) {
-            return false;
-        }
+    public void removeTaskById(int id) {
         try {
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
-            return false;
+            throw e;
         }
-        return true;
     }
 
     @Override
-    public boolean removeEpicById(int id) {
-        if (super.removeEpicById(id)) {
-            return false;
-        }
+    public void removeEpicById(int id) {
         try {
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
-            return false;
+            throw e;
         }
-        return true;
     }
 
     @Override
-    public boolean removeSubtaskById(int id) {
-        if (!super.removeSubtaskById(id)) {
-            return false;
-        }
+    public void removeSubtaskById(int id) {
         try {
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
-            return false;
+            throw e;
         }
-        return true;
     }
 
 
