@@ -54,7 +54,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void createTask(TaskDto taskDto) {
+    public Task createTask(TaskDto taskDto) throws TaskIntersectionException{
         Task task;
         if (taskDto.getStartTime() != null && taskDto.getDuration() != null) {
             task = new Task(generateId(), taskDto.getName(), taskDto.getDescription(), Status.NEW,
@@ -73,10 +73,11 @@ public class InMemoryTaskManager implements TaskManager {
             task = new Task(generateId(), taskDto.getName(), taskDto.getDescription(), Status.NEW);
         }
         tasks.put(task.getId(), task);
+        return task;
     }
 
     @Override
-    public void createSubTusk(SubtaskDto subtaskDto) throws EpicNotExistException, TaskIntersectionException {
+    public Subtask createSubTusk(SubtaskDto subtaskDto) throws EpicNotExistException, TaskIntersectionException {
         if (!epicTasks.containsKey(subtaskDto.getEpicId())) {
             System.out.println("Подзадача не может существовать самостоятельно");
             throw new EpicNotExistException("Epic задачи с id: " + subtaskDto.getEpicId() + " не существует.");
@@ -104,30 +105,32 @@ public class InMemoryTaskManager implements TaskManager {
         epic.getSubtasks().add(subtask);
         checkCondition(epic);
         epicTasks.put(epic.getId(), epic);
+        return subtask;
     }
 
     @Override
-    public void createEpic(EpicDto epicDto) {
+    public Epic createEpic(EpicDto epicDto) throws ManagerSaveException {
         Epic epic = new Epic(generateId(), epicDto.getName(), epicDto.getDescription(),
                 epicDto.getStatus());
         epicTasks.put(epic.getId(), epic);
+        return epic;
     }
 
     @Override
-    public void removeAllTasks() {
+    public void removeAllTasks() throws ManagerSaveException {
         getTasks().forEach(this::freeingMemory);
         tasks.clear();
     }
 
     @Override
-    public void removeAllEpics() {
+    public void removeAllEpics() throws ManagerSaveException {
         getSubTasks().forEach(this::freeingMemory);
         subTasks.clear();
         epicTasks.clear();
     }
 
     @Override
-    public void removeAllSubTasks() {
+    public void removeAllSubTasks() throws ManagerSaveException {
         getSubTasks().forEach(this::freeingMemory);
         subTasks.clear();
         for (Integer i : epicTasks.keySet()) {
@@ -171,7 +174,7 @@ public class InMemoryTaskManager implements TaskManager {
 
 
     @Override
-    public void changeTask(TaskDto taskDto) throws TaskIntersectionException, TaskNotFoundException, AlotOfPlanException {
+    public Task changeTask(TaskDto taskDto) throws TaskIntersectionException, TaskNotFoundException, AlotOfPlanException, ManagerSaveException {
 
         if (!tasks.containsKey(taskDto.getId())) {
             System.out.println("Такой задачи не существует");
@@ -201,10 +204,11 @@ public class InMemoryTaskManager implements TaskManager {
         }
         tasks.put(taskDto.getId(), task);
         System.out.println("Задача была изменена");
+        return task;
     }
 
     @Override
-    public void changeSubTask(SubtaskDto subtaskDto) throws TaskIntersectionException {
+    public Subtask changeSubTask(SubtaskDto subtaskDto) throws TaskIntersectionException, SubtaskNotFoundException, ManagerSaveException {
         if (!subTasks.containsKey(subtaskDto.getId())) {
             System.out.println("Такой подзадачи не существует");
             throw new SubtaskNotFoundException("Подзадачи с id: " + subtaskDto.getId() + " не существует");
@@ -243,10 +247,11 @@ public class InMemoryTaskManager implements TaskManager {
         }
         epicTasks.put(epic.getId(), epic);
         checkCondition(epic);
+        return subtask;
     }
 
     @Override
-    public void changeEpic(EpicDto epicDto) {
+    public Epic changeEpic(EpicDto epicDto) throws EpicNotExistException, ManagerSaveException {
         if (!epicTasks.containsKey(epicDto.getId())) {
             System.out.println("Такого Эпика не существует");
             throw new EpicNotExistException("Epic задачи с id: " + epicDto.getId() + " не существует.");
@@ -257,10 +262,11 @@ public class InMemoryTaskManager implements TaskManager {
         epic.setDescription(epicDto.getDescription());
         sortedTasks.add(epic);
         epicTasks.put(epic.getId(), epic);
+        return epic;
     }
 
     @Override
-    public void removeTaskById(int id) {
+    public void removeTaskById(int id) throws TaskNotFoundException, ManagerSaveException {
         if (!tasks.containsKey(id)) {
             System.out.println("Такой задачи не существует");
             throw new TaskNotFoundException("Задачи с id: " + id + " не существует");
@@ -275,7 +281,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void removeEpicById(int id) {
+    public void removeEpicById(int id) throws EpicNotExistException, ManagerSaveException {
         if (!epicTasks.containsKey(id)) {
             System.out.println("Такого эпика не существует");
             throw new EpicNotExistException("Epic задачи с id: " + id + " не существует.");
@@ -292,7 +298,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void removeSubtaskById(int id) {
+    public void removeSubtaskById(int id) throws SubtaskNotFoundException, ManagerSaveException {
         if (!subTasks.containsKey(id)) {
             System.out.println("Такой подзадачи не существует");
             throw new SubtaskNotFoundException("Подзадачи с id: " + id + " не существует");

@@ -3,10 +3,7 @@ package managers;
 import dto.EpicDto;
 import dto.SubtaskDto;
 import dto.TaskDto;
-import exeptions.EpicNotExistException;
-import exeptions.SubtaskNotFoundException;
-import exeptions.TaskIntersectionException;
-import exeptions.TaskNotFoundException;
+import exeptions.*;
 import task.Epic;
 import task.Subtask;
 import task.Task;
@@ -22,35 +19,35 @@ public interface TaskManager {
 
     List<Subtask> getSubTasks();
 
-    void createTask(TaskDto taskDto) throws TaskIntersectionException;
+    Task createTask(TaskDto taskDto) throws TaskIntersectionException;
 
-    void createSubTusk(SubtaskDto subtaskDto) throws EpicNotExistException, TaskIntersectionException;
+    Subtask createSubTusk(SubtaskDto subtaskDto) throws EpicNotExistException, TaskIntersectionException;
 
-    void createEpic(EpicDto epicDto);
+    Epic createEpic(EpicDto epicDto) throws ManagerSaveException;
 
-    void removeAllTasks();
+    void removeAllTasks() throws ManagerSaveException;
 
-    void removeAllEpics();
+    void removeAllEpics() throws ManagerSaveException;
 
-    void removeAllSubTasks();
+    void removeAllSubTasks() throws ManagerSaveException;
 
-    Optional<Task> getTaskById(int id) throws TaskNotFoundException;
+    Optional<Task> getTaskById(int id);
 
-    Optional<Epic> getEpicById(int id) throws EpicNotExistException;
+    Optional<Epic> getEpicById(int id);
 
     Optional<Subtask> getSubtaskById(int id) throws EpicNotExistException;
 
-    void changeTask(TaskDto taskDto) throws TaskNotFoundException, TaskIntersectionException;
+    Task changeTask(TaskDto taskDto) throws TaskNotFoundException, TaskIntersectionException, ManagerSaveException;
 
-    void changeSubTask(SubtaskDto subtaskDto) throws SubtaskNotFoundException, TaskIntersectionException;
+    Subtask changeSubTask(SubtaskDto subtaskDto) throws SubtaskNotFoundException, TaskIntersectionException, ManagerSaveException;
 
-    void changeEpic(EpicDto epicDto);
+    Epic changeEpic(EpicDto epicDto) throws EpicNotExistException, ManagerSaveException;
 
-    void removeTaskById(int id) throws TaskNotFoundException;
+    void removeTaskById(int id) throws TaskNotFoundException, ManagerSaveException;
 
-    void removeEpicById(int id) throws EpicNotExistException;
+    void removeEpicById(int id) throws EpicNotExistException, ManagerSaveException;
 
-    void removeSubtaskById(int id) throws SubtaskNotFoundException;
+    void removeSubtaskById(int id) throws SubtaskNotFoundException, ManagerSaveException;
 
     Set<Task> getPrioritizedTasks();
 }

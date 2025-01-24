@@ -3,8 +3,7 @@ package managers;
 import dto.EpicDto;
 import dto.SubtaskDto;
 import dto.TaskDto;
-import exeptions.BadMemoryException;
-import exeptions.ManagerSaveException;
+import exeptions.*;
 import task.*;
 
 import java.io.*;
@@ -18,7 +17,7 @@ import java.util.List;
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private static final String FILE_NAME = "tasks.txt";
 
-    public FileBackedTaskManager(HistoryManager historyManager) {
+    public FileBackedTaskManager(HistoryManager historyManager) throws ManagerSaveException {
         super(historyManager);
         Path path = Paths.get(FILE_NAME);
         if (!Files.exists(path)) {
@@ -77,8 +76,48 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
 
     @Override
-    public void createTask(TaskDto taskDto) {
+    public Task createTask(TaskDto taskDto)  {
+        Task task;
         try {
+             task = super.createTask(taskDto);
+            save();
+        } catch (ManagerSaveException | TaskIntersectionException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
+        return task;
+    }
+
+    @Override
+    public Subtask createSubTusk(SubtaskDto subtaskDto) throws EpicNotExistException, TaskIntersectionException {
+        Subtask subtask;
+        try {
+            subtask = super.createSubTusk(subtaskDto);
+            save();
+        } catch (ManagerSaveException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
+        return subtask;
+    }
+
+    @Override
+    public Epic createEpic(EpicDto epicDto) throws ManagerSaveException {
+        Epic epic;
+        try {
+            epic = super.createEpic(epicDto);
+            save();
+        } catch (ManagerSaveException e) {
+            System.out.println(e.getMessage());
+            throw e;
+        }
+        return epic;
+    }
+
+    @Override
+    public void removeAllTasks() throws ManagerSaveException {
+        try {
+            super.removeAllTasks();
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
@@ -87,8 +126,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void createSubTusk(SubtaskDto subtaskDto) {
+    public void removeAllEpics() throws ManagerSaveException {
         try {
+            super.removeAllEpics();
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
@@ -97,38 +137,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void createEpic(EpicDto epicDto) {
+    public void removeAllSubTasks() throws ManagerSaveException {
         try {
-            save();
-        } catch (ManagerSaveException e) {
-            System.out.println(e.getMessage());
-            throw e;
-        }
-    }
-
-    @Override
-    public void removeAllTasks() {
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            System.out.println(e.getMessage());
-            throw e;
-        }
-    }
-
-    @Override
-    public void removeAllEpics() {
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            System.out.println(e.getMessage());
-            throw e;
-        }
-    }
-
-    @Override
-    public void removeAllSubTasks() {
-        try {
+            super.removeAllSubTasks();
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
@@ -138,8 +149,48 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void changeTask(TaskDto taskDto) {
+    public Task changeTask(TaskDto taskDto) throws ManagerSaveException, TaskNotFoundException, TaskIntersectionException {
+        Task task;
         try {
+            task = super.changeTask(taskDto);
+            save();
+        } catch (ManagerSaveException e) {
+            System.out.println(e.getMessage());
+            throw e;
+        }
+        return task;
+    }
+
+    @Override
+    public Subtask changeSubTask(SubtaskDto subtaskDto) throws ManagerSaveException, SubtaskNotFoundException, TaskIntersectionException {
+        Subtask subtask;
+        try {
+            subtask = super.changeSubTask(subtaskDto);
+            save();
+        } catch (ManagerSaveException e) {
+            System.out.println(e.getMessage());
+            throw e;
+        }
+        return subtask;
+    }
+
+    @Override
+    public Epic changeEpic(EpicDto epicDto) throws ManagerSaveException, EpicNotExistException {
+        Epic epic;
+        try {
+            epic = super.changeEpic(epicDto);
+            save();
+        } catch (ManagerSaveException e) {
+            System.out.println(e.getMessage());
+            throw e;
+        }
+        return epic;
+    }
+
+    @Override
+    public void removeTaskById(int id) throws ManagerSaveException, TaskNotFoundException {
+        try {
+            super.removeTaskById(id);
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
@@ -148,8 +199,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void changeSubTask(SubtaskDto subtaskDto) {
+    public void removeEpicById(int id) throws EpicNotExistException, ManagerSaveException {
         try {
+            super.removeEpicById(id);
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
@@ -158,38 +210,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void changeEpic(EpicDto epicDto) {
+    public void removeSubtaskById(int id) throws SubtaskNotFoundException, ManagerSaveException {
         try {
-            save();
-        } catch (ManagerSaveException e) {
-            System.out.println(e.getMessage());
-            throw e;
-        }
-    }
-
-    @Override
-    public void removeTaskById(int id) {
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            System.out.println(e.getMessage());
-            throw e;
-        }
-    }
-
-    @Override
-    public void removeEpicById(int id) {
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            System.out.println(e.getMessage());
-            throw e;
-        }
-    }
-
-    @Override
-    public void removeSubtaskById(int id) {
-        try {
+            super.removeSubtaskById(id);
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());

@@ -21,7 +21,7 @@ public class TasksHandler implements HttpHandler {
     public TasksHandler(TaskManager manager) {
         this.manager = manager;
     }
-ывфажывтажыщш
+
         //Проверить еще раз логику и сдалсть что бы при Create возвращался обьект и при change тоже
     @Override
     public void handle(HttpExchange exchange) throws IOException {
@@ -42,6 +42,7 @@ public class TasksHandler implements HttpHandler {
                         id = Integer.parseInt(splitPath[1]);
                     } catch (NumberFormatException e) {
                         statusCode = 404;
+                        body = e.getMessage();
                         break;
                     }
                     Optional<Task> task = manager.getTaskById(id);
@@ -50,20 +51,23 @@ public class TasksHandler implements HttpHandler {
                         body = gson.toJson(task);
                     }else {
                         statusCode =404;
+                        body = "Задачи с таким c id: " + id + " не сущесвует.";
                     }
                 }else {
                     statusCode = 404;
+                    body = "По данному пути нет endpoint";
                 }
                 break;
             case "POST":
                 if (splitPath.length == 1){
                     try {
-                        manager.createTask( gson.fromJson(new String(exchange.getRequestBody().readAllBytes()
-                                , StandardCharsets.UTF_8), TaskDto.class));
+                      body =  manager.createTask( gson.fromJson(new String(exchange.getRequestBody().readAllBytes()
+                                , StandardCharsets.UTF_8), TaskDto.class)).toString();
                     } catch (TaskIntersectionException e) {
                         statusCode = 400;
                         body = e.getMessage();
                     }
+
                     statusCode = 200;
                     break;
                 }else if (splitPath.length == 2){
@@ -75,8 +79,8 @@ public class TasksHandler implements HttpHandler {
                         break;
                     }
                     try {
-                        manager.changeTask(gson.fromJson(new String(exchange.getRequestBody().readAllBytes()
-                                , StandardCharsets.UTF_8), TaskDto.class));
+                        body = manager.changeTask(gson.fromJson(new String(exchange.getRequestBody().readAllBytes()
+                                , StandardCharsets.UTF_8), TaskDto.class)).toString();
                     } catch (TaskNotFoundException e) {
                         statusCode = 404;
                         body = e.getMessage();
@@ -87,16 +91,46 @@ public class TasksHandler implements HttpHandler {
                         statusCode = 500;
                         body = e.getMessage();
                     }
+                    statusCode = 200;
                 }else {
                     statusCode = 404;
+                    body = "По данному пути нет endpoint";
                 }
                 break;
             case "DELETE":
+                if (splitPath.length == 1){
+                    manager.removeAllTasks();
+                    statusCode = 202;
+                    body = "Список задачь был отчищен.";
+                    break;
+                }else if (splitPath.length == 2){
+                    int id;
+                    try {
+                        id = Integer.parseInt(splitPath[1]);
+                    } catch (NumberFormatException e) {
+                        statusCode = 404;
+                        body = e.getMessage();
+                        break;
+                    }
+                    try {
+                        manager.removeTaskById(id);
+                    } catch (TaskNotFoundException e) {
+                        statusCode = 404;
+                        body = "Задачи с таким c id: " + id + " не сущесвует.";
+                        break;
+                    }
+                    statusCode = 200;
+                    body = "Задача c id: " + id + " была удалена.";
+                }else {
+                    statusCode = 404;
+                    body = "По данному пути нет endpoint";
+                }
                 break;
             default: {
                 statusCode = 404;
+                body = "Таких методов мы не знаем.";
             }
-                //TODO вызвать какой то ментод для ответа method(HttpExchange exchange ,int statusCode,String body);
+          HandlersMessageSender.sendText(exchange, body, statusCode);
         }
     }
 }
