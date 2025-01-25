@@ -22,5 +22,7 @@ public class HttpTaskServer {
     }
 
 
-
+    public void stop() {
+        httpServer.stop(0);
+    }
 }
