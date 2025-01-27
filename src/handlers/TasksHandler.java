@@ -29,11 +29,11 @@ public class TasksHandler implements HttpHandler {
         String[] splitPath = exchange.getRequestURI().getPath().substring(1).split("/");
         Gson gson = new Gson();
         int statusCode;
-        String body;
+        String body = "defoliate";
         switch (method){
             case "GET":
                 if (splitPath.length == 1){
-                    statusCode = 202;
+                    statusCode = 200;
                     body = gson.toJson(manager.getTasks());
                     break;
                 }else if (splitPath.length == 2){
@@ -130,7 +130,8 @@ public class TasksHandler implements HttpHandler {
                 statusCode = 404;
                 body = "Таких методов мы не знаем.";
             }
-          HandlersMessageSender.sendText(exchange, body, statusCode);
+
         }
+        HandlersMessageSender.sendText(exchange, body, statusCode);
     }
 }

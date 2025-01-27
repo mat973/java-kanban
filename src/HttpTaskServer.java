@@ -1,5 +1,7 @@
 import com.sun.net.httpserver.HttpServer;
 import handlers.*;
+import managers.HistoryManager;
+import managers.Managers;
 import managers.TaskManager;
 
 import java.io.IOException;
@@ -20,6 +22,16 @@ public class HttpTaskServer {
         httpServer.createContext("/prioritized", new PrioritizedHandler(manager));
         httpServer.start();
     }
+
+//    public static void main(String[] args) throws IOException {
+//    HistoryManager historyManager = Managers.getDefaultHistory();
+//    TaskManager manager = Managers.getFileTaskManager(historyManager);
+//    try {
+//        HttpTaskServer httpTaskServer = new HttpTaskServer(manager);
+//    } catch (IOException e) {
+//        throw new RuntimeException(e);
+//    }
+//    }
 
 
     public void stop() {
