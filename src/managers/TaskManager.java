@@ -39,7 +39,7 @@ public interface TaskManager {
 
     Task changeTask(TaskDto taskDto) throws TaskNotFoundException, TaskIntersectionException, ManagerSaveException;
 
-    Subtask changeSubTask(SubtaskDto subtaskDto) throws SubtaskNotFoundException, TaskIntersectionException, ManagerSaveException;
+    Subtask changeSubTask(SubtaskDto subtaskDto) throws SubtaskNotFoundException, TaskIntersectionException, ManagerSaveException, EpicNotExistException;
 
     Epic changeEpic(EpicDto epicDto) throws EpicNotExistException, ManagerSaveException;
 
@@ -50,4 +50,6 @@ public interface TaskManager {
     void removeSubtaskById(int id) throws SubtaskNotFoundException, ManagerSaveException;
 
     Set<Task> getPrioritizedTasks();
+
+    HistoryManager getHistoryManager();
 }

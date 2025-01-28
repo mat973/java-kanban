@@ -163,7 +163,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Subtask changeSubTask(SubtaskDto subtaskDto) throws ManagerSaveException, SubtaskNotFoundException, TaskIntersectionException {
+    public Subtask changeSubTask(SubtaskDto subtaskDto) throws ManagerSaveException, SubtaskNotFoundException, TaskIntersectionException, EpicNotExistException {
         Subtask subtask;
         try {
             subtask = super.changeSubTask(subtaskDto);

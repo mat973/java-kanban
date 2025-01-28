@@ -92,10 +92,14 @@ public class SubtasksHandler implements HttpHandler {
                         } catch (TaskIntersectionException e) {
                             statusCode = 406;
                             body = e.getMessage();
+                            break;
                         } catch (SubtaskNotFoundException e) {
                             statusCode =404;
-                            body = "У подзадачи должна быть существующая подзадача";
+                            body = "ползадачи с тайим id не найдено.";
                             break;
+                        } catch (EpicNotExistException e) {
+                            statusCode =404;
+                            body = "У подзадачи должна быть существующая подзадача";
                         }
                     }
                 } else {

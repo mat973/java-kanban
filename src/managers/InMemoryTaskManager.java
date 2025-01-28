@@ -210,10 +210,14 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Subtask changeSubTask(SubtaskDto subtaskDto) throws TaskIntersectionException, SubtaskNotFoundException, ManagerSaveException {
+    public Subtask changeSubTask(SubtaskDto subtaskDto) throws TaskIntersectionException, SubtaskNotFoundException, ManagerSaveException, EpicNotExistException {
         if (!subTasks.containsKey(subtaskDto.getId())) {
             System.out.println("Такой подзадачи не существует");
             throw new SubtaskNotFoundException("Подзадачи с id: " + subtaskDto.getId() + " не существует");
+        }
+        if (!epicTasks.containsKey(subtaskDto.getEpicId())){
+            System.out.println("Такого Эпика не существует");
+            throw new EpicNotExistException("Epic задачи с id: " + subtaskDto.getEpicId() + " не существует.");
         }
         Subtask oldSubtask = subTasks.get(subtaskDto.getId());
         if (sortedTasks.contains(oldSubtask)) {
@@ -406,5 +410,9 @@ public class InMemoryTaskManager implements TaskManager {
             timeMap.put(taskStart, true);
             taskStart = taskStart.plusMinutes(15);
         }
+    }
+
+    public HistoryManager getHistoryManager() {
+        return historyManager;
     }
 }
