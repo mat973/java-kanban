@@ -1,7 +1,7 @@
 package handlers;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
+import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import dto.TaskDto;
@@ -9,10 +9,13 @@ import exeptions.TaskIntersectionException;
 import exeptions.TaskNotFoundException;
 import managers.TaskManager;
 import task.Task;
+import typeTokens.GsonAdapters;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public class TasksHandler implements HttpHandler {
@@ -22,21 +25,23 @@ public class TasksHandler implements HttpHandler {
         this.manager = manager;
     }
 
-        //Проверить еще раз логику и сдалсть что бы при Create возвращался обьект и при change тоже
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         String method = exchange.getRequestMethod();
         String[] splitPath = exchange.getRequestURI().getPath().substring(1).split("/");
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDateTime.class, new GsonAdapters.LocalDateTimeAdapter())
+                .registerTypeAdapter(Duration.class, new GsonAdapters.DurationAdapter())
+                .create();
         int statusCode;
-        String body = "defoliate";
-        switch (method){
+        String body = "";
+        switch (method) {
             case "GET":
-                if (splitPath.length == 1){
+                if (splitPath.length == 1) {
                     statusCode = 200;
                     body = gson.toJson(manager.getTasks());
                     break;
-                }else if (splitPath.length == 2){
+                } else if (splitPath.length == 2) {
                     int id;
                     try {
                         id = Integer.parseInt(splitPath[1]);
@@ -46,64 +51,57 @@ public class TasksHandler implements HttpHandler {
                         break;
                     }
                     Optional<Task> task = manager.getTaskById(id);
-                    if (task.isPresent()){
+                    if (task.isPresent()) {
                         statusCode = 200;
-                        body = gson.toJson(task);
-                    }else {
-                        statusCode =404;
+                        body = gson.toJson(task.get());
+                    } else {
+                        statusCode = 404;
                         body = "Задачи с таким c id: " + id + " не сущесвует.";
                     }
-                }else {
+                } else {
                     statusCode = 404;
                     body = "По данному пути нет endpoint";
                 }
                 break;
             case "POST":
-                if (splitPath.length == 1){
-                    try {
-                      body =  manager.createTask( gson.fromJson(new String(exchange.getRequestBody().readAllBytes()
-                                , StandardCharsets.UTF_8), TaskDto.class)).toString();
-                    } catch (TaskIntersectionException e) {
-                        statusCode = 400;
-                        body = e.getMessage();
-                    }
+                if (splitPath.length == 1) {
+                    TaskDto taskDto = gson.fromJson(new String(exchange.getRequestBody().readAllBytes()
+                            , StandardCharsets.UTF_8), TaskDto.class);
+                    if (taskDto.getId() == null) {
+                        try {
+                            body = manager.createTask(taskDto).toString();
+                        } catch (TaskIntersectionException e) {
+                            statusCode = 400;
+                            body = e.getMessage();
+                            break;
+                        }
 
-                    statusCode = 200;
-                    break;
-                }else if (splitPath.length == 2){
-                    int id;
-                    try {
-                        id = Integer.parseInt(splitPath[1]);
-                    } catch (NumberFormatException e) {
-                        statusCode = 404;
+                        statusCode = 200;
                         break;
+                    } else {
+                        try {
+                            body = manager.changeTask(taskDto).toString();
+                            statusCode = 200;
+                        } catch (TaskNotFoundException e) {
+                            statusCode = 404;
+                            body = e.getMessage();
+                        } catch (TaskIntersectionException e) {
+                            statusCode = 406;
+                            body = e.getMessage();
+                        }
                     }
-                    try {
-                        body = manager.changeTask(gson.fromJson(new String(exchange.getRequestBody().readAllBytes()
-                                , StandardCharsets.UTF_8), TaskDto.class)).toString();
-                    } catch (TaskNotFoundException e) {
-                        statusCode = 404;
-                        body = e.getMessage();
-                    } catch (TaskIntersectionException e) {
-                        statusCode = 406;
-                        body = e.getMessage();
-                    }  catch (IOException e) {
-                        statusCode = 500;
-                        body = e.getMessage();
-                    }
-                    statusCode = 200;
-                }else {
+                } else {
                     statusCode = 404;
                     body = "По данному пути нет endpoint";
                 }
                 break;
             case "DELETE":
-                if (splitPath.length == 1){
+                if (splitPath.length == 1) {
                     manager.removeAllTasks();
                     statusCode = 202;
                     body = "Список задачь был отчищен.";
                     break;
-                }else if (splitPath.length == 2){
+                } else if (splitPath.length == 2) {
                     int id;
                     try {
                         id = Integer.parseInt(splitPath[1]);
@@ -121,7 +119,7 @@ public class TasksHandler implements HttpHandler {
                     }
                     statusCode = 200;
                     body = "Задача c id: " + id + " была удалена.";
-                }else {
+                } else {
                     statusCode = 404;
                     body = "По данному пути нет endpoint";
                 }

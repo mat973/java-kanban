@@ -20,18 +20,19 @@ public class HttpTaskServer {
         httpServer.createContext("/epics", new EpicTasksHandler(manager));
         httpServer.createContext("/history", new HistoryHandler(manager));
         httpServer.createContext("/prioritized", new PrioritizedHandler(manager));
+        System.out.println("Я запустился");
         httpServer.start();
     }
 
-//    public static void main(String[] args) throws IOException {
-//    HistoryManager historyManager = Managers.getDefaultHistory();
-//    TaskManager manager = Managers.getFileTaskManager(historyManager);
-//    try {
-//        HttpTaskServer httpTaskServer = new HttpTaskServer(manager);
-//    } catch (IOException e) {
-//        throw new RuntimeException(e);
-//    }
-//    }
+    public static void main(String[] args) throws IOException {
+    HistoryManager historyManager = Managers.getDefaultHistory();
+    TaskManager manager = Managers.getFileTaskManager(historyManager);
+    try {
+        HttpTaskServer httpTaskServer = new HttpTaskServer(manager);
+    } catch (IOException e) {
+        throw new RuntimeException(e);
+    }
+    }
 
 
     public void stop() {

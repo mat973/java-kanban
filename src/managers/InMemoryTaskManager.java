@@ -76,6 +76,8 @@ public class InMemoryTaskManager implements TaskManager {
         return task;
     }
 
+
+
     @Override
     public Subtask createSubTusk(SubtaskDto subtaskDto) throws EpicNotExistException, TaskIntersectionException {
         if (!epicTasks.containsKey(subtaskDto.getEpicId())) {
@@ -245,8 +247,8 @@ public class InMemoryTaskManager implements TaskManager {
                 list.set(i, subtask);
             }
         }
-        epicTasks.put(epic.getId(), epic);
         checkCondition(epic);
+        epicTasks.put(epic.getId(), epic);
         return subtask;
     }
 
@@ -257,10 +259,10 @@ public class InMemoryTaskManager implements TaskManager {
             throw new EpicNotExistException("Epic задачи с id: " + epicDto.getId() + " не существует.");
         }
         Epic epic = epicTasks.get(epicDto.getId());
-        sortedTasks.remove(epic);
+//        sortedTasks.remove(epic);
         epic.setName(epicDto.getName());
         epic.setDescription(epicDto.getDescription());
-        sortedTasks.add(epic);
+ //       sortedTasks.add(epic);
         epicTasks.put(epic.getId(), epic);
         return epic;
     }
@@ -292,7 +294,6 @@ public class InMemoryTaskManager implements TaskManager {
             historyManager.remove(x.getId());
             sortedTasks.remove(x);
         });
-        sortedTasks.remove(epic);
         historyManager.remove(id);
         epicTasks.remove(id);
     }
@@ -371,6 +372,7 @@ public class InMemoryTaskManager implements TaskManager {
         LocalDateTime checkTime = newStartTime;
         while (!checkTime.equals(newEndTime)) {
             if (!timeMap.get(newStartTime)) {
+                System.out.println(timeMap.get(newStartTime));
                 throw new TaskIntersectionException("на это время запланированно выполнение другой задачи.");
             }
             checkTime = checkTime.plusMinutes(15);
@@ -379,6 +381,20 @@ public class InMemoryTaskManager implements TaskManager {
             timeMap.put(newStartTime, false);
             newStartTime = newStartTime.plusMinutes(15);
         }
+    }
+    protected void updateTimeMap(Task task) {
+        LocalDateTime startTime = task.getStartTime();
+        LocalDateTime endTime = task.getEndTime();
+
+        LocalDateTime roundedStartTime = startTime.minusMinutes(startTime.getMinute() % 15);
+        LocalDateTime roundedEndTime = endTime.minusMinutes(endTime.getMinute() % 15).plusMinutes(15);
+
+        while (!roundedStartTime.equals(roundedEndTime)) {
+            timeMap.put(roundedStartTime, false);
+            roundedStartTime = roundedStartTime.plusMinutes(15);
+        }
+        sortedTasks.add(task);
+
     }
 
     private void freeingMemory(Task task) {

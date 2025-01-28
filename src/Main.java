@@ -14,6 +14,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
 
 
 public class Main {
@@ -22,15 +23,15 @@ public class Main {
 
     private static final Gson gson = new Gson();
 
-static {
-    HistoryManager historyManager = Managers.getDefaultHistory();
-    TaskManager manager = Managers.getFileTaskManager(historyManager);
-    try {
-        HttpTaskServer httpTaskServer = new HttpTaskServer(manager);
-    } catch (IOException e) {
-        throw new RuntimeException(e);
-    }
-}
+//static {
+//    HistoryManager historyManager = Managers.getDefaultHistory();
+//    TaskManager manager = Managers.getFileTaskManager(historyManager);
+//    try {
+//        HttpTaskServer httpTaskServer = new HttpTaskServer(manager);
+//    } catch (IOException e) {
+//        throw new RuntimeException(e);
+//    }
+//}
 
 
     public static void main(String[] args) throws IOException, InterruptedException {
@@ -43,18 +44,18 @@ static {
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        System.out.println(response.body());
 
-             FileBackedTaskManager.deleteFile();
+
+        //FileBackedTaskManager.deleteFile();
 //        //dd MM yyyy HH:mm
 
         TaskDto taskDto = new TaskDto(0, "task", "Desc", Status.NEW, 150L, "27 02 2025 17:30");
         EpicDto epicDto1 = new EpicDto(1, "Epic1", "Desck1", Status.NEW, 150L, "26 02 2025 17:30");
         EpicDto epicDto2 = new EpicDto(2, "Epic2", "Desck3", Status.NEW, 150L, "25 02 2025 17:30");
-        SubtaskDto subtaskDto1 = new SubtaskDto(3, "Sub1", "Description1", Status.NEW, epicDto1, 150L, "26 02 2025 17:30");
-        SubtaskDto subtaskDto2 = new SubtaskDto(4, "Sub2", "Description2", Status.NEW, epicDto1, 150L, "25 02 2025 17:30");
-        SubtaskDto subtaskDto3 = new SubtaskDto(5, "Sub3", "Description3", Status.NEW, epicDto2, 150L, "24 02 2025 17:30");
-        SubtaskDto subtaskDto4 = new SubtaskDto(5, "Sub33", "Description33", Status.NEW, epicDto2, 150L, "24 02 2025 17:30");
+//        SubtaskDto subtaskDto1 = new SubtaskDto(3, "Sub1", "Description1", Status.NEW, epicDto1, 150L, "26 02 2025 17:30");
+//        SubtaskDto subtaskDto2 = new SubtaskDto(4, "Sub2", "Description2", Status.NEW, epicDto1, 150L, "25 02 2025 17:30");
+//        SubtaskDto subtaskDto3 = new SubtaskDto(5, "Sub3", "Description3", Status.NEW, epicDto2, 150L, "24 02 2025 17:30");
+//        SubtaskDto subtaskDto4 = new SubtaskDto(5, "Sub33", "Description33", Status.NEW, epicDto2, 150L, "24 02 2025 17:30");
         System.out.println(gson.toJson(taskDto));
         HttpRequest request1 = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:8080/tasks"))
@@ -63,11 +64,11 @@ static {
 
         response = client.send(request1, HttpResponse.BodyHandlers.ofString());
 
-        System.out.println(response.body());
+
 
         response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        System.out.println(response.body());
+
 //        response = client.send(request1, HttpResponse.BodyHandlers.ofString());
 //
 //        System.out.println(response.body());

@@ -1,5 +1,6 @@
 package task;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -18,6 +19,7 @@ public class Epic extends Task {
         this.subtasks = new ArrayList<>();
     }
 
+
     public ArrayList<Subtask> getSubtasks() {
         return subtasks;
     }
@@ -26,7 +28,7 @@ public class Epic extends Task {
     @Override
     public String toString() {
         String result = "ID:" + getId() + " [Название:" + getName() + ", описание:" + getDescription() + ", состояние:"
-                + getStatus().name() + ". Подзадачи:";
+                + getStatus().name() + ", подзадачи:";
         for (int i = 0; i < subtasks.size(); i++) {
             result = result + "ID: " + subtasks.get(i).getId() + ", имя: " + subtasks.get(i).getName() + ", состояние: "
                     + subtasks.get(i).getStatus();

@@ -10,6 +10,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.SQLOutput;
 import java.time.Duration;
 import java.util.List;
 
@@ -17,7 +18,7 @@ import java.util.List;
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private static final String FILE_NAME = "tasks.txt";
 
-    public FileBackedTaskManager(HistoryManager historyManager) throws ManagerSaveException {
+    public FileBackedTaskManager(HistoryManager historyManager) {
         super(historyManager);
         Path path = Paths.get(FILE_NAME);
         if (!Files.exists(path)) {
@@ -76,14 +77,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
 
     @Override
-    public Task createTask(TaskDto taskDto)  {
+    public Task createTask(TaskDto taskDto) throws TaskIntersectionException {
         Task task;
         try {
              task = super.createTask(taskDto);
             save();
         } catch (ManagerSaveException | TaskIntersectionException e) {
             System.out.println(e.getMessage());
-            throw new RuntimeException(e);
+            throw e;
         }
         return task;
     }
@@ -225,7 +226,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         try (FileWriter writer = new FileWriter(FILE_NAME);
              BufferedWriter bufferedWriter = new BufferedWriter(writer)) {
             bufferedWriter.write("MaxId:" + (getCurrentId() - 1) + ",id,type,name,status,description,epic\n");
-            ;
             writeTasks(getTasks(), bufferedWriter);
             writeEpic(getEpicTasks(), bufferedWriter);
             writeSubtask(getSubTasks(), bufferedWriter);
@@ -302,8 +302,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         if (sLine.length == 5) {
             return new Task(Integer.parseInt(sLine[0]), sLine[2], sLine[3], Status.getStatus(sLine[4]));
         } else {
-            return new Task(Integer.parseInt(sLine[0]), sLine[2], sLine[3], Status.getStatus(sLine[4]),
+            Task task = new Task(Integer.parseInt(sLine[0]), sLine[2], sLine[3], Status.getStatus(sLine[4]),
                     localParser(sLine[5]), sLine[6]);
+            super.updateTimeMap(task);
+            return task;
         }
     }
 
@@ -311,18 +313,23 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         if (sLine.length == 5) {
             return new Epic(Integer.parseInt(sLine[0]), sLine[2], sLine[3], Status.getStatus(sLine[4]));
         } else {
-            return new Epic(Integer.parseInt(sLine[0]), sLine[2], sLine[3], Status.getStatus(sLine[4]),
+            Epic epic = new Epic(Integer.parseInt(sLine[0]), sLine[2], sLine[3], Status.getStatus(sLine[4]),
                     localParser(sLine[5]), sLine[6]);
+            super.updateTimeMap(epic);
+            return epic;
         }
     }
 
     private Subtask stringToSubtask(String[] sLine) {
         if (sLine.length == 6) {
+
             return new Subtask(Integer.parseInt(sLine[0]), sLine[2], sLine[3], Status.getStatus(sLine[4]),
                     Integer.parseInt(sLine[5]));
         } else {
-            return new Subtask(Integer.parseInt(sLine[0]), sLine[2], sLine[3], Status.getStatus(sLine[4]),
+            Subtask subtask = new Subtask(Integer.parseInt(sLine[0]), sLine[2], sLine[3], Status.getStatus(sLine[4]),
                     Integer.parseInt(sLine[5]), localParser(sLine[6]), sLine[7]);
+            super.updateTimeMap(subtask);
+            return subtask;
         }
     }
 

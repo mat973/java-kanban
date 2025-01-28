@@ -26,6 +26,7 @@ public class Task implements Comparable<Task> {
         this.startTime = LocalDateTime.parse(startTime, inputFormatter);
     }
 
+
     public Task(int id, String name, String description, Status status) {
         this.id = id;
         this.description = description;

@@ -35,7 +35,7 @@ public interface TaskManager {
 
     Optional<Epic> getEpicById(int id);
 
-    Optional<Subtask> getSubtaskById(int id) throws EpicNotExistException;
+    Optional<Subtask> getSubtaskById(int id);
 
     Task changeTask(TaskDto taskDto) throws TaskNotFoundException, TaskIntersectionException, ManagerSaveException;
 
