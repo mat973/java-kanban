@@ -10,7 +10,7 @@ import exeptions.SubtaskNotFoundException;
 import exeptions.TaskIntersectionException;
 import managers.TaskManager;
 import task.Subtask;
-import typeTokens.GsonAdapters;
+import util.GsonAdapters;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

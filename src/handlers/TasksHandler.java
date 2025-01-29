@@ -9,7 +9,7 @@ import exeptions.TaskIntersectionException;
 import exeptions.TaskNotFoundException;
 import managers.TaskManager;
 import task.Task;
-import typeTokens.GsonAdapters;
+import util.GsonAdapters;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

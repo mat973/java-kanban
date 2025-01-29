@@ -1,4 +1,4 @@
-package typeTokens;
+package util;
 
 import com.google.gson.*;
 

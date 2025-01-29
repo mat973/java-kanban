@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import managers.TaskManager;
-import typeTokens.GsonAdapters;
+import util.GsonAdapters;
 
 import java.io.IOException;
 import java.time.Duration;
