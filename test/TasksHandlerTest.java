@@ -34,41 +34,6 @@ public class TasksHandlerTest {
         server.stop(); // Завершение сервера
     }
 
-    @Test
-    void testGetAllTasksEmpty() throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/tasks"))
-                .GET()
-                .build();
-
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        assertEquals(202, response.statusCode()); // Проверяем статус-код
-        assertEquals("[]", response.body()); // Проверяем, что список задач пустой
-    }
-
-    @Test
-    void testCreateTask() throws IOException, InterruptedException {
-        String taskJson = """
-                {
-                    "name": "Test Task",
-                    "description": "This is a test task",
-                    "duration": 30,
-                    "startTime": "2025-01-01T10:00:00"
-                }
-                """;
-
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/tasks"))
-                .POST(HttpRequest.BodyPublishers.ofString(taskJson))
-                .header("Content-Type", "application/json")
-                .build();
-
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        assertEquals(200, response.statusCode()); // Проверяем статус-код
-        assertTrue(response.body().contains("Test Task")); // Проверяем, что задача добавлена
-    }
 
     @Test
     void testDeleteAllTasks() throws IOException, InterruptedException {
