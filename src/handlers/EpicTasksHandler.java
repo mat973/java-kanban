@@ -86,8 +86,8 @@ public class EpicTasksHandler implements HttpHandler {
                 break;
             case "POST":
                 if (splitPath.length == 1) {
-                    EpicDto epicDto = gson.fromJson(new String(exchange.getRequestBody().readAllBytes()
-                            , StandardCharsets.UTF_8), EpicDto.class);
+                    EpicDto epicDto = gson.fromJson(new String(exchange.getRequestBody().readAllBytes(),
+                            StandardCharsets.UTF_8), EpicDto.class);
                     if (epicDto.getId() == null) {
                         body = manager.createEpic(epicDto).toString();
                         statusCode = 200;
