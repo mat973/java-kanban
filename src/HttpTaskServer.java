@@ -25,13 +25,13 @@ public class HttpTaskServer {
     }
 
     public static void main(String[] args) throws IOException {
-    HistoryManager historyManager = Managers.getDefaultHistory();
-    TaskManager manager = Managers.getFileTaskManager(historyManager);
-    try {
-        HttpTaskServer httpTaskServer = new HttpTaskServer(manager);
-    } catch (IOException e) {
-        throw new RuntimeException(e);
-    }
+        HistoryManager historyManager = Managers.getDefaultHistory();
+        TaskManager manager = Managers.getFileTaskManager(historyManager);
+        try {
+            HttpTaskServer httpTaskServer = new HttpTaskServer(manager);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

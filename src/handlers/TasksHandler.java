@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 public class TasksHandler implements HttpHandler {
@@ -34,7 +33,7 @@ public class TasksHandler implements HttpHandler {
                 .registerTypeAdapter(Duration.class, new GsonAdapters.DurationAdapter())
                 .create();
         int statusCode;
-        String body = "";
+        String body;
         switch (method) {
             case "GET":
                 if (splitPath.length == 1) {

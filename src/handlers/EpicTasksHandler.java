@@ -32,7 +32,7 @@ public class EpicTasksHandler implements HttpHandler {
                 .registerTypeAdapter(Duration.class, new GsonAdapters.DurationAdapter())
                 .create();
         int statusCode;
-        String body = "";
+        String body;
         switch (method) {
             case "GET":
                 if (splitPath.length == 1) {
@@ -56,16 +56,16 @@ public class EpicTasksHandler implements HttpHandler {
                         statusCode = 404;
                         body = "Эпической задачи с таким c id: " + id + " не сущесвует.";
                     }
-                }else if (splitPath.length == 3){
-                    if (splitPath[2].equals("subtasks")){
-                    int id;
-                    try {
-                        id = Integer.parseInt(splitPath[1]);
-                    } catch (NumberFormatException e) {
-                        statusCode = 404;
-                        body = e.getMessage();
-                        break;
-                    }
+                } else if (splitPath.length == 3) {
+                    if (splitPath[2].equals("subtasks")) {
+                        int id;
+                        try {
+                            id = Integer.parseInt(splitPath[1]);
+                        } catch (NumberFormatException e) {
+                            statusCode = 404;
+                            body = e.getMessage();
+                            break;
+                        }
                         Optional<Epic> epic = manager.getEpicById(id);
                         if (epic.isPresent()) {
                             statusCode = 200;
@@ -74,12 +74,12 @@ public class EpicTasksHandler implements HttpHandler {
                             statusCode = 404;
                             body = "Эпической задачи с таким c id: " + id + " не сущесвует.";
                         }
-                    }else {
+                    } else {
                         statusCode = 404;
                         body = "По данному пути нет endpoint";
                         break;
                     }
-                }else {
+                } else {
                     statusCode = 404;
                     body = "По данному пути нет endpoint";
                 }

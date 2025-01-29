@@ -2,19 +2,12 @@ import com.google.gson.Gson;
 import dto.EpicDto;
 import dto.SubtaskDto;
 import dto.TaskDto;
-import managers.FileBackedTaskManager;
-import managers.HistoryManager;
-import managers.Managers;
-import managers.TaskManager;
-import task.Epic;
 import task.Status;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.Duration;
 
 
 public class Main {
@@ -42,8 +35,7 @@ public class Main {
                 .build();
 
 
- //       HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
+        //       HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
 
         //FileBackedTaskManager.deleteFile();
@@ -64,18 +56,15 @@ public class Main {
                 .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(taskDto)))
                 .build();
 
-    //    response = client.send(request1, HttpResponse.BodyHandlers.ofString());
+        //    response = client.send(request1, HttpResponse.BodyHandlers.ofString());
 
 
-
-   //     response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        //     response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
 
 //        response = client.send(request1, HttpResponse.BodyHandlers.ofString());
 //
 //        System.out.println(response.body());
-
-
 
 
     }

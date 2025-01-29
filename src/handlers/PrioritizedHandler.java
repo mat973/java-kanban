@@ -28,13 +28,13 @@ public class PrioritizedHandler implements HttpHandler {
                 .registerTypeAdapter(Duration.class, new GsonAdapters.DurationAdapter())
                 .create();
         int statusCode;
-        String body = "";
+        String body;
 
-        if (method.equals("GET") && splitPath.length == 1){
+        if (method.equals("GET") && splitPath.length == 1) {
             statusCode = 200;
             body = gson.toJson(manager.getPrioritizedTasks());
-        }else {
-            statusCode =404;
+        } else {
+            statusCode = 404;
             body = "Мы не знаем таких запросов.";
         }
         HandlersMessageSender.sendText(exchange, body, statusCode);

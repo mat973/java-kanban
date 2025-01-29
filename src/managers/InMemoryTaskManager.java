@@ -54,7 +54,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Task createTask(TaskDto taskDto) throws TaskIntersectionException{
+    public Task createTask(TaskDto taskDto) throws TaskIntersectionException {
         Task task;
         if (taskDto.getStartTime() != null && taskDto.getDuration() != null) {
             task = new Task(generateId(), taskDto.getName(), taskDto.getDescription(), Status.NEW,
@@ -75,7 +75,6 @@ public class InMemoryTaskManager implements TaskManager {
         tasks.put(task.getId(), task);
         return task;
     }
-
 
 
     @Override
@@ -195,9 +194,13 @@ public class InMemoryTaskManager implements TaskManager {
                 checkIntersectionTask(task);
             } catch (TaskIntersectionException e) {
                 System.out.println("Задача " + task.getName() + "не омжет быть онавлена т.к." + e.getMessage());
+                updateTimeMap(oldTask);
+                sortedTasks.add(oldTask);
                 throw e;
             } catch (AlotOfPlanException e) {
                 System.out.println("Если хочешь насмешить бога, расскажи ему о своих планах." + e.getMessage());
+                updateTimeMap(oldTask);
+                sortedTasks.add(oldTask);
                 throw e;
             }
             sortedTasks.add(task);
@@ -215,7 +218,7 @@ public class InMemoryTaskManager implements TaskManager {
             System.out.println("Такой подзадачи не существует");
             throw new SubtaskNotFoundException("Подзадачи с id: " + subtaskDto.getId() + " не существует");
         }
-        if (!epicTasks.containsKey(subtaskDto.getEpicId())){
+        if (!epicTasks.containsKey(subtaskDto.getEpicId())) {
             System.out.println("Такого Эпика не существует");
             throw new EpicNotExistException("Epic задачи с id: " + subtaskDto.getEpicId() + " не существует.");
         }
@@ -233,9 +236,13 @@ public class InMemoryTaskManager implements TaskManager {
                 checkIntersectionTask(subtask);
             } catch (TaskIntersectionException e) {
                 System.out.println("Подзадача " + subtask.getName() + " неможет быть обновлена т.к. " + e.getMessage());
+                updateTimeMap(oldSubtask);
+                sortedTasks.add(oldSubtask);
                 throw e;
             } catch (AlotOfPlanException e) {
                 System.out.println("Если хочешь насмешить бога, расскажи ему о своих планах." + e.getMessage());
+                updateTimeMap(oldSubtask);
+                sortedTasks.add(oldSubtask);
                 throw e;
             }
             sortedTasks.add(subtask);
@@ -266,7 +273,7 @@ public class InMemoryTaskManager implements TaskManager {
 //        sortedTasks.remove(epic);
         epic.setName(epicDto.getName());
         epic.setDescription(epicDto.getDescription());
- //       sortedTasks.add(epic);
+        //       sortedTasks.add(epic);
         epicTasks.put(epic.getId(), epic);
         return epic;
     }
@@ -373,19 +380,19 @@ public class InMemoryTaskManager implements TaskManager {
         }
         LocalDateTime newStartTime = taskStart.minusMinutes(taskStart.getMinute() % 15);
         LocalDateTime newEndTime = taskEnd.minusMinutes(taskEnd.getMinute() % 15).plusMinutes(15);
-        LocalDateTime checkTime = newStartTime;
-        while (!checkTime.equals(newEndTime)) {
+        while (!newStartTime.equals(newEndTime)) {
             if (!timeMap.get(newStartTime)) {
-                System.out.println(timeMap.get(newStartTime));
+                System.out.println(newEndTime + " " + timeMap.get(newStartTime) + "\n");
                 throw new TaskIntersectionException("на это время запланированно выполнение другой задачи.");
             }
-            checkTime = checkTime.plusMinutes(15);
+            newStartTime = newStartTime.plusMinutes(15);
         }
         while (!newStartTime.equals(newEndTime)) {
             timeMap.put(newStartTime, false);
             newStartTime = newStartTime.plusMinutes(15);
         }
     }
+
     protected void updateTimeMap(Task task) {
         LocalDateTime startTime = task.getStartTime();
         LocalDateTime endTime = task.getEndTime();
@@ -405,9 +412,13 @@ public class InMemoryTaskManager implements TaskManager {
         LocalDateTime taskStart = task.getStartTime();
         LocalDateTime taskEnd = task.getEndTime();
         taskStart = taskStart.minusMinutes(taskStart.getMinute() % 15);
+        System.out.println(taskStart);
         taskEnd = taskEnd.minusMinutes(taskEnd.getMinute() % 15).plusMinutes(15);
+        System.out.println(taskEnd);
         while (!taskStart.equals(taskEnd)) {
+
             timeMap.put(taskStart, true);
+            System.out.println(taskStart + " " + timeMap.get(taskStart) + "\n");
             taskStart = taskStart.plusMinutes(15);
         }
     }

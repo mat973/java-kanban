@@ -5,14 +5,11 @@ import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import dto.SubtaskDto;
-import dto.TaskDto;
 import exeptions.EpicNotExistException;
 import exeptions.SubtaskNotFoundException;
 import exeptions.TaskIntersectionException;
-import exeptions.TaskNotFoundException;
 import managers.TaskManager;
 import task.Subtask;
-import task.Task;
 import typeTokens.GsonAdapters;
 
 import java.io.IOException;
@@ -37,7 +34,7 @@ public class SubtasksHandler implements HttpHandler {
                 .registerTypeAdapter(Duration.class, new GsonAdapters.DurationAdapter())
                 .create();
         int statusCode;
-        String body = "";
+        String body;
         switch (method) {
             case "GET":
                 if (splitPath.length == 1) {
@@ -78,7 +75,7 @@ public class SubtasksHandler implements HttpHandler {
                             body = e.getMessage();
                             break;
                         } catch (EpicNotExistException e) {
-                            statusCode =404;
+                            statusCode = 404;
                             body = "У подзадачи должна быть существующая подзадача";
                             break;
                         }
@@ -94,11 +91,11 @@ public class SubtasksHandler implements HttpHandler {
                             body = e.getMessage();
                             break;
                         } catch (SubtaskNotFoundException e) {
-                            statusCode =404;
+                            statusCode = 404;
                             body = "ползадачи с тайим id не найдено.";
                             break;
                         } catch (EpicNotExistException e) {
-                            statusCode =404;
+                            statusCode = 404;
                             body = "У подзадачи должна быть существующая подзадача";
                         }
                     }
@@ -125,7 +122,7 @@ public class SubtasksHandler implements HttpHandler {
                     try {
                         manager.removeSubtaskById(id);
                     } catch (SubtaskNotFoundException e) {
-                        statusCode =404;
+                        statusCode = 404;
                         body = "У подзадачи должна быть существующая подзадача";
                         break;
                     }
