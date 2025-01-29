@@ -64,8 +64,8 @@ public class TasksHandler implements HttpHandler {
                 break;
             case "POST":
                 if (splitPath.length == 1) {
-                    TaskDto taskDto = gson.fromJson(new String(exchange.getRequestBody().readAllBytes()
-                            , StandardCharsets.UTF_8), TaskDto.class);
+                    TaskDto taskDto = gson.fromJson(new String(exchange.getRequestBody().readAllBytes(),
+                            StandardCharsets.UTF_8), TaskDto.class);
                     if (taskDto.getId() == null) {
                         try {
                             body = manager.createTask(taskDto).toString();

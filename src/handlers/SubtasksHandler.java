@@ -65,8 +65,8 @@ public class SubtasksHandler implements HttpHandler {
                 break;
             case "POST":
                 if (splitPath.length == 1) {
-                    SubtaskDto subtaskDto = gson.fromJson(new String(exchange.getRequestBody().readAllBytes()
-                            , StandardCharsets.UTF_8), SubtaskDto.class);
+                    SubtaskDto subtaskDto = gson.fromJson(new String(exchange.getRequestBody().readAllBytes(),
+                            StandardCharsets.UTF_8), SubtaskDto.class);
                     if (subtaskDto.getId() == null) {
                         try {
                             body = manager.createSubTusk(subtaskDto).toString();
