@@ -3,8 +3,7 @@ package managers;
 import dto.EpicDto;
 import dto.SubtaskDto;
 import dto.TaskDto;
-import exeptions.BadMemoryException;
-import exeptions.ManagerSaveException;
+import exeptions.*;
 import task.*;
 
 import java.io.*;
@@ -77,175 +76,148 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
 
     @Override
-    public boolean createTask(TaskDto taskDto) {
-        if (!super.createTask(taskDto)) {
-            return false;
-        }
+    public Task createTask(TaskDto taskDto) throws TaskIntersectionException {
+        Task task;
         try {
+            task = super.createTask(taskDto);
             save();
-        } catch (ManagerSaveException e) {
+        } catch (ManagerSaveException | TaskIntersectionException e) {
             System.out.println(e.getMessage());
+            throw e;
         }
-        return true;
+        return task;
     }
 
     @Override
-    public boolean createSubTusk(SubtaskDto subtaskDto) {
-        if (!super.createSubTusk(subtaskDto)) {
-            return false;
-        }
+    public Subtask createSubTusk(SubtaskDto subtaskDto) throws EpicNotExistException, TaskIntersectionException {
+        Subtask subtask;
         try {
+            subtask = super.createSubTusk(subtaskDto);
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
-            return false;
+            throw new RuntimeException(e);
         }
-        return true;
+        return subtask;
     }
 
     @Override
-    public boolean createEpic(EpicDto epicDto) {
-        if (!super.createEpic(epicDto)) {
-            return false;
-        }
+    public Epic createEpic(EpicDto epicDto) throws ManagerSaveException {
+        Epic epic;
         try {
+            epic = super.createEpic(epicDto);
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
-            return false;
+            throw e;
         }
-        return true;
+        return epic;
     }
 
     @Override
-    public boolean removeAllTasks() {
-        if (!super.removeAllTasks()) {
-            return false;
-        }
+    public void removeAllTasks() throws ManagerSaveException {
         try {
+            super.removeAllTasks();
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
-            return false;
+            throw e;
         }
-        return true;
     }
 
     @Override
-    public boolean removeAllEpics() {
-        if (super.removeAllEpics()) {
-            return false;
-        }
+    public void removeAllEpics() throws ManagerSaveException {
         try {
+            super.removeAllEpics();
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
-            return false;
+            throw e;
         }
-        return true;
     }
 
     @Override
-    public boolean removeAllSubTasks() {
-        if (!super.removeAllSubTasks()) {
-            return false;
-        }
+    public void removeAllSubTasks() throws ManagerSaveException {
         try {
+            super.removeAllSubTasks();
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
-            return false;
+            throw e;
         }
-        return true;
 
     }
 
     @Override
-    public boolean changeTask(TaskDto taskDto) {
-
-        if (!super.changeTask(taskDto)) {
-            return false;
-        }
-
+    public Task changeTask(TaskDto taskDto) throws ManagerSaveException, TaskNotFoundException, TaskIntersectionException {
+        Task task;
         try {
+            task = super.changeTask(taskDto);
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
-            return false;
+            throw e;
         }
-        return true;
+        return task;
     }
 
     @Override
-    public boolean changeSubTask(SubtaskDto subtaskDto) {
-
-        if (!super.changeSubTask(subtaskDto)) {
-            return false;
-        }
-
+    public Subtask changeSubTask(SubtaskDto subtaskDto) throws ManagerSaveException, SubtaskNotFoundException, TaskIntersectionException, EpicNotExistException {
+        Subtask subtask;
         try {
+            subtask = super.changeSubTask(subtaskDto);
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
-            return false;
+            throw e;
         }
-        return true;
+        return subtask;
     }
 
     @Override
-    public boolean changeEpic(EpicDto epicDto) {
-        if (super.changeEpic(epicDto)) {
-            return false;
-        }
+    public Epic changeEpic(EpicDto epicDto) throws ManagerSaveException, EpicNotExistException {
+        Epic epic;
         try {
+            epic = super.changeEpic(epicDto);
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
-            return false;
+            throw e;
         }
-        return true;
+        return epic;
     }
 
     @Override
-    public boolean removeTaskById(int id) {
-        if (!super.removeTaskById(id)) {
-            return false;
-        }
+    public void removeTaskById(int id) throws ManagerSaveException, TaskNotFoundException {
         try {
+            super.removeTaskById(id);
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
-            return false;
+            throw e;
         }
-        return true;
     }
 
     @Override
-    public boolean removeEpicById(int id) {
-        if (super.removeEpicById(id)) {
-            return false;
-        }
+    public void removeEpicById(int id) throws EpicNotExistException, ManagerSaveException {
         try {
+            super.removeEpicById(id);
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
-            return false;
+            throw e;
         }
-        return true;
     }
 
     @Override
-    public boolean removeSubtaskById(int id) {
-        if (!super.removeSubtaskById(id)) {
-            return false;
-        }
+    public void removeSubtaskById(int id) throws SubtaskNotFoundException, ManagerSaveException {
         try {
+            super.removeSubtaskById(id);
             save();
         } catch (ManagerSaveException e) {
             System.out.println(e.getMessage());
-            return false;
+            throw e;
         }
-        return true;
     }
 
 
@@ -253,7 +225,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         try (FileWriter writer = new FileWriter(FILE_NAME);
              BufferedWriter bufferedWriter = new BufferedWriter(writer)) {
             bufferedWriter.write("MaxId:" + (getCurrentId() - 1) + ",id,type,name,status,description,epic\n");
-            ;
             writeTasks(getTasks(), bufferedWriter);
             writeEpic(getEpicTasks(), bufferedWriter);
             writeSubtask(getSubTasks(), bufferedWriter);
@@ -330,8 +301,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         if (sLine.length == 5) {
             return new Task(Integer.parseInt(sLine[0]), sLine[2], sLine[3], Status.getStatus(sLine[4]));
         } else {
-            return new Task(Integer.parseInt(sLine[0]), sLine[2], sLine[3], Status.getStatus(sLine[4]),
+            Task task = new Task(Integer.parseInt(sLine[0]), sLine[2], sLine[3], Status.getStatus(sLine[4]),
                     localParser(sLine[5]), sLine[6]);
+            super.updateTimeMap(task);
+            return task;
         }
     }
 
@@ -339,18 +312,23 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         if (sLine.length == 5) {
             return new Epic(Integer.parseInt(sLine[0]), sLine[2], sLine[3], Status.getStatus(sLine[4]));
         } else {
-            return new Epic(Integer.parseInt(sLine[0]), sLine[2], sLine[3], Status.getStatus(sLine[4]),
+            Epic epic = new Epic(Integer.parseInt(sLine[0]), sLine[2], sLine[3], Status.getStatus(sLine[4]),
                     localParser(sLine[5]), sLine[6]);
+            super.updateTimeMap(epic);
+            return epic;
         }
     }
 
     private Subtask stringToSubtask(String[] sLine) {
         if (sLine.length == 6) {
+
             return new Subtask(Integer.parseInt(sLine[0]), sLine[2], sLine[3], Status.getStatus(sLine[4]),
                     Integer.parseInt(sLine[5]));
         } else {
-            return new Subtask(Integer.parseInt(sLine[0]), sLine[2], sLine[3], Status.getStatus(sLine[4]),
+            Subtask subtask = new Subtask(Integer.parseInt(sLine[0]), sLine[2], sLine[3], Status.getStatus(sLine[4]),
                     Integer.parseInt(sLine[5]), localParser(sLine[6]), sLine[7]);
+            super.updateTimeMap(subtask);
+            return subtask;
         }
     }
 

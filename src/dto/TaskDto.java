@@ -3,7 +3,7 @@ package dto;
 import task.Status;
 
 public class TaskDto {
-    private int id;
+    private Integer id;
     private String description;
     private Status status;
     private String name;
@@ -11,7 +11,7 @@ public class TaskDto {
     private String startTime;
 
 
-    public TaskDto(int id, String name, String description, Status status, Long minutes, String startTime) {
+    public TaskDto(Integer id, String name, String description, Status status, Long minutes, String startTime) {
         this.id = id;
         this.description = description;
         this.status = status;
@@ -20,7 +20,7 @@ public class TaskDto {
         this.startTime = startTime;
     }
 
-    public TaskDto(int id, String description, String name, Status status) {
+    public TaskDto(Integer id, String description, String name, Status status) {
         this.id = id;
         this.description = description;
         this.status = status;

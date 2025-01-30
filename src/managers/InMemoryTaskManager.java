@@ -3,9 +3,7 @@ package managers;
 import dto.EpicDto;
 import dto.SubtaskDto;
 import dto.TaskDto;
-import exeptions.AlotOfPlanExeption;
-import exeptions.EpicNotExistException;
-import exeptions.TaskIntersectionExeption;
+import exeptions.*;
 import task.Epic;
 import task.Status;
 import task.Subtask;
@@ -56,33 +54,34 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public boolean createTask(TaskDto taskDto) {
+    public Task createTask(TaskDto taskDto) throws TaskIntersectionException {
         Task task;
         if (taskDto.getStartTime() != null && taskDto.getDuration() != null) {
             task = new Task(generateId(), taskDto.getName(), taskDto.getDescription(), Status.NEW,
                     taskDto.getDuration(), taskDto.getStartTime());
             try {
                 checkIntersectionTask(task);
-            } catch (TaskIntersectionExeption e) {
+            } catch (TaskIntersectionException e) {
                 System.out.println("Здача " + task.getName() + " не может быть созданна т.к." + e.getMessage());
-                return false;
-            } catch (AlotOfPlanExeption e) {
+                throw e;
+            } catch (AlotOfPlanException e) {
                 System.out.println("Если хочешь насмешить бога, расскажи ему о своих планах." + e.getMessage());
-                return false;
+                throw e;
             }
             sortedTasks.add(task);
         } else {
             task = new Task(generateId(), taskDto.getName(), taskDto.getDescription(), Status.NEW);
         }
         tasks.put(task.getId(), task);
-        return true;
+        return task;
     }
 
+
     @Override
-    public boolean createSubTusk(SubtaskDto subtaskDto) throws EpicNotExistException, TaskIntersectionExeption {
+    public Subtask createSubTusk(SubtaskDto subtaskDto) throws EpicNotExistException, TaskIntersectionException {
         if (!epicTasks.containsKey(subtaskDto.getEpicId())) {
-            System.out.println("Подзадача не может сущесвовать самастоятельно");
-            return false;
+            System.out.println("Подзадача не может существовать самостоятельно");
+            throw new EpicNotExistException("Epic задачи с id: " + subtaskDto.getEpicId() + " не существует.");
         }
         Epic epic = epicTasks.get(subtaskDto.getEpicId());
         Subtask subtask;
@@ -91,12 +90,12 @@ public class InMemoryTaskManager implements TaskManager {
                     epic.getId(), subtaskDto.getDuration(), subtaskDto.getStartTime());
             try {
                 checkIntersectionTask(subtask);
-            } catch (TaskIntersectionExeption e) {
+            } catch (TaskIntersectionException e) {
                 System.out.println("Подзадача " + subtask.getName() + " не может быть созданна т.к. " + e.getMessage());
-                return false;
-            } catch (AlotOfPlanExeption e) {
+                throw e;
+            } catch (AlotOfPlanException e) {
                 System.out.println("Если хочешь насмешить бога, расскажи ему о своих планах." + e.getMessage());
-                return false;
+                throw e;
             }
             sortedTasks.add(subtask);
         } else {
@@ -107,42 +106,38 @@ public class InMemoryTaskManager implements TaskManager {
         epic.getSubtasks().add(subtask);
         checkCondition(epic);
         epicTasks.put(epic.getId(), epic);
-        return true;
+        return subtask;
     }
 
     @Override
-    public boolean createEpic(EpicDto epicDto) {
+    public Epic createEpic(EpicDto epicDto) throws ManagerSaveException {
         Epic epic = new Epic(generateId(), epicDto.getName(), epicDto.getDescription(),
                 epicDto.getStatus());
-
         epicTasks.put(epic.getId(), epic);
-        return true;
+        return epic;
     }
 
     @Override
-    public boolean removeAllTasks() {
+    public void removeAllTasks() throws ManagerSaveException {
         getTasks().forEach(this::freeingMemory);
         tasks.clear();
-        return true;
     }
 
     @Override
-    public boolean removeAllEpics() {
+    public void removeAllEpics() throws ManagerSaveException {
         getSubTasks().forEach(this::freeingMemory);
         subTasks.clear();
         epicTasks.clear();
-        return true;
     }
 
     @Override
-    public boolean removeAllSubTasks() {
+    public void removeAllSubTasks() throws ManagerSaveException {
         getSubTasks().forEach(this::freeingMemory);
         subTasks.clear();
         for (Integer i : epicTasks.keySet()) {
             epicTasks.get(i).getSubtasks().clear();
             checkCondition(epicTasks.get(i));
         }
-        return true;
     }
 
     @Override
@@ -180,11 +175,11 @@ public class InMemoryTaskManager implements TaskManager {
 
 
     @Override
-    public boolean changeTask(TaskDto taskDto) throws TaskIntersectionExeption {
+    public Task changeTask(TaskDto taskDto) throws TaskIntersectionException, TaskNotFoundException, AlotOfPlanException, ManagerSaveException {
 
         if (!tasks.containsKey(taskDto.getId())) {
             System.out.println("Такой задачи не существует");
-            return false;
+            throw new TaskNotFoundException("Задачи с id: " + taskDto.getId() + " не существует");
         }
         Task oldTask = tasks.get(taskDto.getId());
         if (sortedTasks.contains(oldTask)) {
@@ -197,12 +192,16 @@ public class InMemoryTaskManager implements TaskManager {
                     taskDto.getDuration(), taskDto.getStartTime());
             try {
                 checkIntersectionTask(task);
-            } catch (TaskIntersectionExeption e) {
+            } catch (TaskIntersectionException e) {
                 System.out.println("Задача " + task.getName() + "не омжет быть онавлена т.к." + e.getMessage());
-                return false;
-            } catch (AlotOfPlanExeption e) {
+                updateTimeMap(oldTask);
+                sortedTasks.add(oldTask);
+                throw e;
+            } catch (AlotOfPlanException e) {
                 System.out.println("Если хочешь насмешить бога, расскажи ему о своих планах." + e.getMessage());
-                return false;
+                updateTimeMap(oldTask);
+                sortedTasks.add(oldTask);
+                throw e;
             }
             sortedTasks.add(task);
         } else {
@@ -210,14 +209,18 @@ public class InMemoryTaskManager implements TaskManager {
         }
         tasks.put(taskDto.getId(), task);
         System.out.println("Задача была изменена");
-        return true;
+        return task;
     }
 
     @Override
-    public boolean changeSubTask(SubtaskDto subtaskDto) throws TaskIntersectionExeption {
+    public Subtask changeSubTask(SubtaskDto subtaskDto) throws TaskIntersectionException, SubtaskNotFoundException, ManagerSaveException, EpicNotExistException {
         if (!subTasks.containsKey(subtaskDto.getId())) {
             System.out.println("Такой подзадачи не существует");
-            return false;
+            throw new SubtaskNotFoundException("Подзадачи с id: " + subtaskDto.getId() + " не существует");
+        }
+        if (!epicTasks.containsKey(subtaskDto.getEpicId())) {
+            System.out.println("Такого Эпика не существует");
+            throw new EpicNotExistException("Epic задачи с id: " + subtaskDto.getEpicId() + " не существует.");
         }
         Subtask oldSubtask = subTasks.get(subtaskDto.getId());
         if (sortedTasks.contains(oldSubtask)) {
@@ -231,12 +234,16 @@ public class InMemoryTaskManager implements TaskManager {
                     subtaskDto.getDuration(), subtaskDto.getStartTime());
             try {
                 checkIntersectionTask(subtask);
-            } catch (TaskIntersectionExeption e) {
+            } catch (TaskIntersectionException e) {
                 System.out.println("Подзадача " + subtask.getName() + " неможет быть обновлена т.к. " + e.getMessage());
-                return false;
-            } catch (AlotOfPlanExeption e) {
+                updateTimeMap(oldSubtask);
+                sortedTasks.add(oldSubtask);
+                throw e;
+            } catch (AlotOfPlanException e) {
                 System.out.println("Если хочешь насмешить бога, расскажи ему о своих планах." + e.getMessage());
-                return false;
+                updateTimeMap(oldSubtask);
+                sortedTasks.add(oldSubtask);
+                throw e;
             }
             sortedTasks.add(subtask);
         } else {
@@ -251,32 +258,31 @@ public class InMemoryTaskManager implements TaskManager {
                 list.set(i, subtask);
             }
         }
-        epicTasks.put(epic.getId(), epic);
         checkCondition(epic);
-        return true;
+        epicTasks.put(epic.getId(), epic);
+        return subtask;
     }
 
     @Override
-    public boolean changeEpic(EpicDto epicDto) {
+    public Epic changeEpic(EpicDto epicDto) throws EpicNotExistException, ManagerSaveException {
         if (!epicTasks.containsKey(epicDto.getId())) {
             System.out.println("Такого Эпика не существует");
-            return false;
+            throw new EpicNotExistException("Epic задачи с id: " + epicDto.getId() + " не существует.");
         }
         Epic epic = epicTasks.get(epicDto.getId());
-        sortedTasks.remove(epic);
+//        sortedTasks.remove(epic);
         epic.setName(epicDto.getName());
         epic.setDescription(epicDto.getDescription());
-        sortedTasks.add(epic);
+        //       sortedTasks.add(epic);
         epicTasks.put(epic.getId(), epic);
-        return true;
-
+        return epic;
     }
 
     @Override
-    public boolean removeTaskById(int id) {
+    public void removeTaskById(int id) throws TaskNotFoundException, ManagerSaveException {
         if (!tasks.containsKey(id)) {
             System.out.println("Такой задачи не существует");
-            return false;
+            throw new TaskNotFoundException("Задачи с id: " + id + " не существует");
         }
         Task task = getTaskById(id).get();
         if (sortedTasks.contains(task)) {
@@ -285,14 +291,13 @@ public class InMemoryTaskManager implements TaskManager {
         }
         historyManager.remove(id);
         tasks.remove(id);
-        return true;
     }
 
     @Override
-    public boolean removeEpicById(int id) {
+    public void removeEpicById(int id) throws EpicNotExistException, ManagerSaveException {
         if (!epicTasks.containsKey(id)) {
             System.out.println("Такого эпика не существует");
-            return false;
+            throw new EpicNotExistException("Epic задачи с id: " + id + " не существует.");
         }
         Epic epic = epicTasks.get(id);
         epic.getSubtasks().forEach(x -> {
@@ -300,17 +305,15 @@ public class InMemoryTaskManager implements TaskManager {
             historyManager.remove(x.getId());
             sortedTasks.remove(x);
         });
-        sortedTasks.remove(epic);
         historyManager.remove(id);
         epicTasks.remove(id);
-        return true;
     }
 
     @Override
-    public boolean removeSubtaskById(int id) {
+    public void removeSubtaskById(int id) throws SubtaskNotFoundException, ManagerSaveException {
         if (!subTasks.containsKey(id)) {
             System.out.println("Такой подзадачи не существует");
-            return false;
+            throw new SubtaskNotFoundException("Подзадачи с id: " + id + " не существует");
         }
         Subtask subtask = subTasks.get(id);
         Epic epic = epicTasks.get(subtask.getEpicId());
@@ -323,7 +326,6 @@ public class InMemoryTaskManager implements TaskManager {
         subTasks.remove(subtask.getId());
         checkCondition(epic);
         epicTasks.put(epic.getId(), epic);
-        return true;
     }
 
 
@@ -370,20 +372,20 @@ public class InMemoryTaskManager implements TaskManager {
         return sortedTasks;
     }
 
-    private void checkIntersectionTask(Task task) throws TaskIntersectionExeption, AlotOfPlanExeption {
+    private void checkIntersectionTask(Task task) throws TaskIntersectionException, AlotOfPlanException {
         LocalDateTime taskStart = task.getStartTime();
         LocalDateTime taskEnd = task.getEndTime();
         if (taskStart.getYear() < 2025 || taskStart.getYear() > 2035 || taskEnd.getYear() > 2035) {
-            throw new AlotOfPlanExeption("Мы не строим планы так на долго!");
+            throw new AlotOfPlanException("Мы не строим планы так на долго!");
         }
         LocalDateTime newStartTime = taskStart.minusMinutes(taskStart.getMinute() % 15);
         LocalDateTime newEndTime = taskEnd.minusMinutes(taskEnd.getMinute() % 15).plusMinutes(15);
-        LocalDateTime checkTime = newStartTime;
-        while (!checkTime.equals(newEndTime)) {
+        while (!newStartTime.equals(newEndTime)) {
             if (!timeMap.get(newStartTime)) {
-                throw new TaskIntersectionExeption("на это время запланированно выполнение другой задачи.");
+                System.out.println(newEndTime + " " + timeMap.get(newStartTime) + "\n");
+                throw new TaskIntersectionException("на это время запланированно выполнение другой задачи.");
             }
-            checkTime = checkTime.plusMinutes(15);
+            newStartTime = newStartTime.plusMinutes(15);
         }
         while (!newStartTime.equals(newEndTime)) {
             timeMap.put(newStartTime, false);
@@ -391,14 +393,37 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
+    protected void updateTimeMap(Task task) {
+        LocalDateTime startTime = task.getStartTime();
+        LocalDateTime endTime = task.getEndTime();
+
+        LocalDateTime roundedStartTime = startTime.minusMinutes(startTime.getMinute() % 15);
+        LocalDateTime roundedEndTime = endTime.minusMinutes(endTime.getMinute() % 15).plusMinutes(15);
+
+        while (!roundedStartTime.equals(roundedEndTime)) {
+            timeMap.put(roundedStartTime, false);
+            roundedStartTime = roundedStartTime.plusMinutes(15);
+        }
+        sortedTasks.add(task);
+
+    }
+
     private void freeingMemory(Task task) {
         LocalDateTime taskStart = task.getStartTime();
         LocalDateTime taskEnd = task.getEndTime();
         taskStart = taskStart.minusMinutes(taskStart.getMinute() % 15);
+        System.out.println(taskStart);
         taskEnd = taskEnd.minusMinutes(taskEnd.getMinute() % 15).plusMinutes(15);
+        System.out.println(taskEnd);
         while (!taskStart.equals(taskEnd)) {
+
             timeMap.put(taskStart, true);
+            System.out.println(taskStart + " " + timeMap.get(taskStart) + "\n");
             taskStart = taskStart.plusMinutes(15);
         }
+    }
+
+    public HistoryManager getHistoryManager() {
+        return historyManager;
     }
 }

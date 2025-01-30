@@ -3,7 +3,7 @@ package managers;
 import dto.EpicDto;
 import dto.SubtaskDto;
 import dto.TaskDto;
-import exeptions.TaskIntersectionExeption;
+import exeptions.*;
 import task.Epic;
 import task.Subtask;
 import task.Task;
@@ -19,17 +19,17 @@ public interface TaskManager {
 
     List<Subtask> getSubTasks();
 
-    boolean createTask(TaskDto taskDto) throws TaskIntersectionExeption;
+    Task createTask(TaskDto taskDto) throws TaskIntersectionException;
 
-    boolean createSubTusk(SubtaskDto subtaskDto);
+    Subtask createSubTusk(SubtaskDto subtaskDto) throws EpicNotExistException, TaskIntersectionException;
 
-    boolean createEpic(EpicDto epicDto);
+    Epic createEpic(EpicDto epicDto) throws ManagerSaveException;
 
-    boolean removeAllTasks();
+    void removeAllTasks() throws ManagerSaveException;
 
-    boolean removeAllEpics();
+    void removeAllEpics() throws ManagerSaveException;
 
-    boolean removeAllSubTasks();
+    void removeAllSubTasks() throws ManagerSaveException;
 
     Optional<Task> getTaskById(int id);
 
@@ -37,17 +37,19 @@ public interface TaskManager {
 
     Optional<Subtask> getSubtaskById(int id);
 
-    boolean changeTask(TaskDto taskDto);
+    Task changeTask(TaskDto taskDto) throws TaskNotFoundException, TaskIntersectionException, ManagerSaveException;
 
-    boolean changeSubTask(SubtaskDto subtaskDto);
+    Subtask changeSubTask(SubtaskDto subtaskDto) throws SubtaskNotFoundException, TaskIntersectionException, ManagerSaveException, EpicNotExistException;
 
-    boolean changeEpic(EpicDto epicDto);
+    Epic changeEpic(EpicDto epicDto) throws EpicNotExistException, ManagerSaveException;
 
-    boolean removeTaskById(int id);
+    void removeTaskById(int id) throws TaskNotFoundException, ManagerSaveException;
 
-    boolean removeEpicById(int id);
+    void removeEpicById(int id) throws EpicNotExistException, ManagerSaveException;
 
-    boolean removeSubtaskById(int id);
+    void removeSubtaskById(int id) throws SubtaskNotFoundException, ManagerSaveException;
 
     Set<Task> getPrioritizedTasks();
+
+    HistoryManager getHistoryManager();
 }
