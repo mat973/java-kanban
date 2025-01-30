@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+import static handlers.Method.GET;
+
 public class PrioritizedHandler implements HttpHandler {
     private TaskManager manager;
 
@@ -21,7 +23,7 @@ public class PrioritizedHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
 
-        String method = exchange.getRequestMethod();
+        Method method = Method.valueOf(exchange.getRequestMethod());
         String[] splitPath = exchange.getRequestURI().getPath().substring(1).split("/");
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(LocalDateTime.class, new GsonAdapters.LocalDateTimeAdapter())
@@ -30,7 +32,7 @@ public class PrioritizedHandler implements HttpHandler {
         int statusCode;
         String body;
 
-        if (method.equals("GET") && splitPath.length == 1) {
+        if (method.equals(GET) && splitPath.length == 1) {
             statusCode = 200;
             body = gson.toJson(manager.getPrioritizedTasks());
         } else {

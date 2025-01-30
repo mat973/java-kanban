@@ -25,7 +25,7 @@ public class GsonAdapters {
     public static class DurationAdapter implements JsonSerializer<Duration>, JsonDeserializer<Duration> {
         @Override
         public JsonElement serialize(Duration src, Type typeOfSrc, JsonSerializationContext context) {
-            return new JsonPrimitive(src.toMinutes()); // Сохраняем длительность в минутах
+            return new JsonPrimitive(src.toMinutes());
         }
 
         @Override

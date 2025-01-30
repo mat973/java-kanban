@@ -16,7 +16,9 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+
 public class EpicTasksHandler implements HttpHandler {
+
     private TaskManager manager;
 
     public EpicTasksHandler(TaskManager manager) {
@@ -25,7 +27,7 @@ public class EpicTasksHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        String method = exchange.getRequestMethod();
+        Method method = Method.valueOf(exchange.getRequestMethod());
         String[] splitPath = exchange.getRequestURI().getPath().substring(1).split("/");
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(LocalDateTime.class, new GsonAdapters.LocalDateTimeAdapter())
@@ -34,7 +36,7 @@ public class EpicTasksHandler implements HttpHandler {
         int statusCode;
         String body;
         switch (method) {
-            case "GET":
+            case GET:
                 if (splitPath.length == 1) {
                     statusCode = 200;
                     body = gson.toJson(manager.getEpicTasks());
@@ -84,7 +86,7 @@ public class EpicTasksHandler implements HttpHandler {
                     body = "По данному пути нет endpoint";
                 }
                 break;
-            case "POST":
+            case POST:
                 if (splitPath.length == 1) {
                     EpicDto epicDto = gson.fromJson(new String(exchange.getRequestBody().readAllBytes(),
                             StandardCharsets.UTF_8), EpicDto.class);
@@ -107,7 +109,7 @@ public class EpicTasksHandler implements HttpHandler {
                     body = "По данному пути нет endpoint";
                 }
                 break;
-            case "DELETE":
+            case DELETE:
                 if (splitPath.length == 1) {
                     manager.removeAllEpics();
                     statusCode = 202;
